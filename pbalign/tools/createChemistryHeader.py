@@ -28,8 +28,8 @@ def format_rgds_entries(rgds_entries):
 
     rgds_strings = {}
     for rg_id in rgds_entries:
-        rgds_string = ("BINDINGKIT:{b};SEQUENCINGKIT:{s};"
-                       "SOFTWAREVERSION:{v}"
+        rgds_string = ("BINDINGKIT={b};SEQUENCINGKIT={s};"
+                       "SOFTWAREVERSION={v}"
                        .format(b=rgds_entries[rg_id][0],
                                s=rgds_entries[rg_id][1],
                                v=rgds_entries[rg_id][2]))
