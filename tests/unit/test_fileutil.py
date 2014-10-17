@@ -13,6 +13,8 @@ class Test_fileutil(unittest.TestCase):
     """Test pbalign.util/fileutil.py"""
     def setUp(self):
         self.rootDir = path.dirname(path.dirname(path.abspath(__file__)))
+        self.dataDir = "/mnt/secondary-siv/testdata/BlasrTestData/ctest/" + \
+                       "data/testLoadPulses/Analysis_Results/"
 
     def test_isValidInputFormat(self):
         """Test isValidInputFormat()."""
@@ -43,20 +45,17 @@ class Test_fileutil(unittest.TestCase):
     def test_getFilesFromFOFN(self):
         """Test getFilesFromFOFN()."""
         fofnFN = "{0}/data/ecoli_lp.fofn".format(self.rootDir)
-        fns = ["/home/UNIXHOME/yli/yliWorkspace/private/yli/data" + \
-               "/testLoadPulses/m121215_065521_richard_c10042571" + \
-               "0150000001823055001121371_s1_p0.pls.h5",
-               "/home/UNIXHOME/yli/yliWorkspace/private/yli/data" + \
-               "/testLoadPulses/m121215_065521_richard_c10042571" + \
-               "0150000001823055001121371_s2_p0.pls.h5"]
+        fns = [self.dataDir +
+               "m121215_065521_richard_c100425710150000001823055001121371_s1_p0.pls.h5",
+               self.dataDir +
+               "m121215_065521_richard_c100425710150000001823055001121371_s2_p0.pls.h5"]
         self.assertEqual(fns, getFilesFromFOFN(fofnFN))
 
     def test_checkInputFile(self):
         """Test checkInputFile()."""
         fastaFN = "{0}/data/ecoli.fasta".format(self.rootDir)
-        plsFN = "/home/UNIXHOME/yli/yliWorkspace/private/yli/" + \
-                "data/testLoadPulses/m121215_065521_richard_" + \
-                "c100425710150000001823055001121371_s1_p0.pls.h5"
+        plsFN = self.dataDir + \
+                "m121215_065521_richard_c100425710150000001823055001121371_s1_p0.pls.h5"
         self.assertTrue(filecmp.cmp(fastaFN, checkInputFile(fastaFN)))
         self.assertTrue(filecmp.cmp(plsFN, checkInputFile(plsFN)))
 
