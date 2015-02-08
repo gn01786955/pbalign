@@ -1,17 +1,18 @@
 import unittest
 from os import path
 from pbalign.pbalignrunner import PBAlignRunner
+from test_setpath import ROOT_DIR, DATA_DIR, OUT_DIR
 
 class Test_PBAlignRunner(unittest.TestCase):
     def setUp(self):
-        self.rootDir = path.dirname(path.dirname(path.abspath(__file__)))
+        self.rootDir = ROOT_DIR
         self.queryFile = path.join(self.rootDir, "data/lambda_query.fasta")
         self.referenceFile = "/mnt/secondary/Smrtanalysis/opt/" + \
                              "smrtanalysis/common/references/" + \
                              "lambda/sequence/lambda.fasta"
         self.configFile = path.join(self.rootDir, "data/1.config")
-        self.samOut = path.join(self.rootDir, "out/lambda_out.sam")
-        self.cmph5Out = path.join(self.rootDir, "out/lambda_out.cmp.h5")
+        self.samOut = path.join(OUT_DIR, "lambda_out.sam")
+        self.cmph5Out = path.join(OUT_DIR, "lambda_out.cmp.h5")
 
     def test_init(self):
         """Test PBAlignRunner.__init__()."""

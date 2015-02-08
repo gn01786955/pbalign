@@ -231,7 +231,7 @@ Test pbalign
 
 #Test pbalign with -filterAdapterOnly
   $ READFILE=$DATDIR/test_filterAdapterOnly.fofn
-  $ REFDIR=/mnt/secondary-siv/testdata/BlasrTestData/pbalign/data/references/H1_6_Scal_6x/
+  $ REFDIR=/mnt/secondary-siv/testdata/pbalign-unittest/data/references/H1_6_Scal_6x/
   $ OUTPUT=$OUTDIR/test_filterAdapterOnly.sam
   $ rm -f $OUTPUT
   $ pbalign $READFILE $REFDIR $OUTPUT --filterAdapterOnly --algorithmOptions=" -holeNumbers 10817,14760" --seed=1 

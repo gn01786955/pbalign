@@ -2,17 +2,18 @@ import unittest
 import filecmp
 from os import path
 from pbalign.pbalignfiles import PBAlignFiles
+from test_setpath import ROOT_DIR, OUT_DIR
 
 class Test_PbAlignFiles_Ecoli(unittest.TestCase):
     def setUp(self):
-        self.rootDir = path.dirname(path.dirname(path.abspath(__file__)))
+        self.rootDir = ROOT_DIR
         self.inputFileName    = path.join(self.rootDir, "data/ecoli.fasta")
         self.referencePath    = "/mnt/secondary/Smrtanalysis/opt/" + \
                                 "smrtanalysis/common/references/ecoli_K12_MG1655/"
         self.targetFileName   = path.join(self.referencePath,
                                           "sequence/ecoli_K12_MG1655.fasta")
         self.sawriterFileName = self.targetFileName + ".sa"
-        self.outputFileName   = path.join(self.rootDir, "out/tmp.sam")
+        self.outputFileName   = path.join(OUT_DIR, "tmp.sam")
 
     def test_init(self):
         """Test PBAlignFiles.__init__() with a reference repository."""
@@ -30,12 +31,12 @@ class Test_PbAlignFiles_Ecoli(unittest.TestCase):
 
 class Test_PbAlignFiles(unittest.TestCase):
     def setUp(self):
-        self.rootDir = path.dirname(path.dirname(path.abspath(__file__)))
+        self.rootDir = ROOT_DIR
         self.inputFileName = path.join(self.rootDir, "data/lambda_bax.fofn")
         self.referenceFile = "/mnt/secondary/Smrtanalysis/opt/" + \
                              "smrtanalysis/common/references/" + \
                              "lambda/sequence/lambda.fasta"
-        self.outputFileName = path.join(self.rootDir, "out/tmp.sam")
+        self.outputFileName = path.join(OUT_DIR, "tmp.sam")
 
     def test_init(self):
         """Test PBAlignFiles.__init__()."""

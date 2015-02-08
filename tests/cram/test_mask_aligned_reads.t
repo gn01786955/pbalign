@@ -1,6 +1,6 @@
 Test mask_aligned_reads.py 
   $ CURDIR=$TESTDIR
-  $ DATDIR=/mnt/secondary-siv/testdata/BlasrTestData/pbalign/data/test_mask_aligned_reads
+  $ DATDIR=/mnt/secondary-siv/testdata/pbalign-unittest/data/test_mask_aligned_reads
   $ OUTDIR=$CURDIR/../out
   $ STDDIR=$DATDIR/../../stdout
 

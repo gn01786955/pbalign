@@ -4,6 +4,7 @@ from os import path, remove
 from shutil import copyfile
 from pbalign.forquiverservice.sort import SortService
 from tempfile import mkstemp
+from test_setpath import DATA_DIR
 
 
 class Opt(object):
@@ -16,9 +17,7 @@ class Test_SortService(unittest.TestCase):
     """Test pbalign.forquiverservice.sort."""
     def setUp(self):
         """Set up tests."""
-        self.rootDir = "/mnt/secondary-siv/" + \
-                       "testdata/BlasrTestData/pbalign"
-        self.inCmpFile = path.join(self.rootDir, "data/testsort.cmp.h5")
+        self.inCmpFile = path.join(DATA_DIR, "testsort.cmp.h5")
         self.outCmpFile = mkstemp(suffix=".cmp.h5")[1]
 
         copyfile(self.inCmpFile, self.outCmpFile)

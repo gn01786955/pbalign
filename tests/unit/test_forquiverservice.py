@@ -5,6 +5,7 @@ from shutil import copyfile
 from pbalign.forquiverservice.forquiver import ForQuiverService
 from pbalign.pbalignfiles import PBAlignFiles
 from tempfile import mkstemp
+from test_setpath import DATA_DIR
 
 class Opt(object):
     """Simulate PBAlign options."""
@@ -18,14 +19,11 @@ class Opt(object):
 class Test_ForQuiverService(unittest.TestCase):
     """Test pbalign.forquiverservice.forquiver."""
     def setUp(self):
-        self.rootDir = "/mnt/secondary-siv/" + \
-                       "testdata/BlasrTestData/pbalign"
-        self.inCmpFile = path.join(self.rootDir, "data/testforquiver.cmp.h5")
-        #self.outCmpFile = path.join(self.rootDir, "out/testforquiver.cmp.h5")
+        self.inCmpFile = path.join(DATA_DIR, "testforquiver.cmp.h5")
         self.outCmpFile = mkstemp(suffix=".cmp.h5")[1]
 
         copyfile(self.inCmpFile, self.outCmpFile)
-        self.basFile = path.join(self.rootDir, "data/lambda_bax.fofn")
+        self.basFile = path.join(DATA_DIR, "lambda_bax.fofn")
 
         refpath = "/mnt/secondary/Smrtanalysis/opt/" + \
                   "smrtanalysis/common/references/lambda/"

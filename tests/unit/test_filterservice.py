@@ -2,6 +2,7 @@
 from pbalign.filterservice import FilterService
 from os import path
 import unittest
+from test_setpath import ROOT_DIR, DATA_DIR, OUT_DIR, STD_DIR
 
 class Opt(object):
     """The Option class."""
@@ -18,14 +19,14 @@ class Opt(object):
 class Test_FilterService(unittest.TestCase):
     """Test pbalign.filterservice."""
     def setUp(self):
-        self.testDir = path.dirname(path.dirname(path.abspath(__file__)))
+        self.testDir = ROOT_DIR
         self.alignedSam    = path.join(self.testDir,
                                        "data/lambda.sam")
         self.targetFileName = "/mnt/secondary/Smrtanalysis/opt/" + \
                                "smrtanalysis/common/references/" + \
                                "lambda/sequence/lambda.fasta"
-        self.filteredSam   = path.join(self.testDir,
-                                       "out/lambda_filtered.sam")
+        self.filteredSam   = path.join(OUT_DIR,
+                                       "lambda_filtered.sam")
 
     def test_init(self):
         """Test FilterService.__init__()."""

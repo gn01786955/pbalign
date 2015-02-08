@@ -4,20 +4,17 @@ from os import path, remove
 from shutil import copyfile
 from pbalign.forquiverservice.repack import RepackService
 from tempfile import mkstemp
+from test_setpath import DATA_DIR
 
 
 class Test_RepackService(unittest.TestCase):
     """Test pbalign.forquiverservice.repack."""
     def setUp(self):
         """Set up the tests."""
-        self.rootDir = "/mnt/secondary-siv/" + \
-                       "testdata/BlasrTestData/pbalign"
-        self.inCmpFile = path.join(self.rootDir, "data/testrepack.cmp.h5")
-        #self.outCmpFile = path.join(self.rootDir, "out/testrepack.cmp.h5")
+        self.inCmpFile = path.join(DATA_DIR, "testrepack.cmp.h5")
         self.outCmpFile = mkstemp(suffix=".cmp.h5")[1]
         self.tmpCmpFile = self.outCmpFile + ".tmp"
 
-        #self.tmpCmpFile = path.join(self.rootDir, "out/testrepack.cmp.h5.tmp")
         copyfile(self.inCmpFile, self.outCmpFile)
         self.options = {}
         self.obj = RepackService(self.outCmpFile, self.tmpCmpFile)

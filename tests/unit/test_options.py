@@ -3,8 +3,9 @@ from argparse import *
 from os import path
 import filecmp
 import unittest
+from test_setpath import ROOT_DIR
 
-rootDir = path.dirname(path.dirname(path.abspath(__file__)))
+rootDir = ROOT_DIR
 configFile = path.join(rootDir, "data/2.config")
 configFile3 = path.join(rootDir, "data/3.config")
 

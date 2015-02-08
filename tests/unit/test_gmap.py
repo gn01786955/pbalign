@@ -5,14 +5,15 @@ from pbalign.alignservice.gmap import GMAPService
 from pbalign.pbalignfiles import PBAlignFiles
 from pbalign.options import parseOptions
 import argparse
+from test_setpath import ROOT_DIR, OUT_DIR
 
 
 class Test_GMAPService(unittest.TestCase):
     """Test pbalign.alignservices.gmap."""
     def setUp(self):
         """Set up test data."""
-        self.rootDir = path.dirname(path.dirname(path.abspath(__file__)))
-        self.outDir = path.join(self.rootDir, "out/")
+        self.rootDir = ROOT_DIR
+        self.outDir = OUT_DIR
         self.outSam = path.join(self.outDir, "test_gmap_01.sam")
         self.dataDir = path.join(self.rootDir, "data/")
         self.queryFofn = path.join(self.dataDir, "ecoli_lp.fofn")

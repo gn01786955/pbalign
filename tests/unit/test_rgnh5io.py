@@ -6,6 +6,7 @@ from pbalign.utils.RgnH5IO import Region, RegionTable, RgnH5Reader, \
     RgnH5Writer, addStrListAttr
 from os import path
 import h5py
+from test_setpath import ROOT_DIR, DATA_DIR, OUT_DIR
 
 
 class Test_RgnH5IO(unittest.TestCase):
@@ -13,11 +14,10 @@ class Test_RgnH5IO(unittest.TestCase):
 
     def setUp(self):
         """Set up test data."""
-        self.rootDir = path.dirname(path.dirname(path.abspath(__file__)))
-        self.inRgnFN = "/mnt/secondary-siv/testdata/" + \
-            "BlasrTestData/pbalign/data/test_rgnh5io.rgn.h5"
-        self.outRgnFN = path.join(self.rootDir, "out/test_rgnh5io_out.rgn.h5")
-        self.outTmpFN = path.join(self.rootDir, "out/test_rgnh5io_tmp.h5")
+        self.rootDir = ROOT_DIR
+        self.inRgnFN = path.join(DATA_DIR, "test_rgnh5io.rgn.h5")
+        self.outRgnFN = path.join(OUT_DIR, "test_rgnh5io_out.rgn.h5")
+        self.outTmpFN = path.join(OUT_DIR, "test_rgnh5io_tmp.h5")
         self.movieName = "m130427_152935_42178_" + \
             "c100518602550000001823079209281316_s1_p0"
 
