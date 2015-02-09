@@ -5,8 +5,7 @@ class Test_ReferenceInfo(unittest.TestCase):
 
     def test_init(self):
         """Test ReferenceInfo.__init__() with a valid reference.info.xml."""
-        rootDir = "/mnt/secondary/Smrtanalysis/opt/" + \
-                  "smrtanalysis/common/references/lambda/"
+        rootDir = "/mnt/secondary-siv/references/lambda/"
         r = ReferenceInfo(rootDir + "reference.info.xml")
         self.assertEqual(r.refFastaFile, rootDir + "sequence/lambda.fasta")
         self.assertEqual(r.refSawriterFile, rootDir + "sequence/lambda.fasta.sa")

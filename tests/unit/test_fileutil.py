@@ -75,8 +75,7 @@ class Test_fileutil(unittest.TestCase):
 
     def test_checkReferencePath(self):
         """Test checkReferencePath()."""
-        refDir = "/mnt/secondary/Smrtanalysis/opt/smrtanalysis/common/" + \
-            "references"
+        refDir = "/mnt/secondary-siv/references/"
         refPath = path.join(refDir, "lambda")
         refPath, refFastaOut, refSaOut, isWithinRepository, annotation = \
             checkReferencePath(refPath)
