@@ -25,8 +25,7 @@ class Test_ForQuiverService(unittest.TestCase):
         copyfile(self.inCmpFile, self.outCmpFile)
         self.basFile = path.join(DATA_DIR, "lambda_bax.fofn")
 
-        refpath = "/mnt/secondary/Smrtanalysis/opt/" + \
-                  "smrtanalysis/common/references/lambda/"
+        refpath = "/mnt/secondary-siv/references/lambda/"
 
         self.fileNames = PBAlignFiles()
         self.fileNames.SetInOutFiles(self.basFile, refpath,
