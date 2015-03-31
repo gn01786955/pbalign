@@ -185,8 +185,9 @@ class AlignService (Service):
             self._tempFileManager,
             self._fileNames.isWithinRepository)
 
-        suffix = ".bam" if (getFileFormat(self._fileNames.outputFileName)
-                            == FILE_FORMATS.BAM) else ".sam"
+        outFormat = getFileFormat(self._fileNames.outputFileName)
+        suffix = ".bam" if (outFormat == FILE_FORMATS.BAM or
+                            outFormat == FILE_FORMATS.XML) else ".sam"
         self._fileNames.alignerSamOut = self._tempFileManager.\
             RegisterNewTmpFile(suffix=suffix)
 

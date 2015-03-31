@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceSet xmlns="http://pacificbiosciences.com/PacBioDataModel.xsd" MetaType="PacBio.DataSet.ReferenceSet" Name="DataSet_ReferenceSet" Tags="barcode moreTags mapping mytags" UniqueId="b095d0a3-94b8-4918-b3af-a3f81bbe519c" Version="2.3.0" CreatedAt="2015-01-27T09:00:01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pacificbiosciences.com/PacBioDataModel.xsd ../../../../../../../../common/datamodel/SequEl/EndToEnd/xsd/PacBioSecondaryDataModel.xsd">
+	<ExternalDataReferences>
+        <ExternalReference Name="First References FASTA" Description="Points to an example references FASTA file." MetaType="PacBio.ReferenceFile.ReferenceFastaFile" ResourceId="file:/mnt/secondary-siv/testdata/pbalign-unittest/data/lambda_ref.fasta" Tags="Example">
+			<PacBioIndex MetaType="PacBio.Index.SaWriterIndex" ResourceId="file:/mnt/path/to/reference.fasta.sa"/>
+			<PacBioIndex MetaType="PacBio.Index.SamIndex" ResourceId="file:/mnt/path/to/reference.fasta.fai"/>
+		</ExternalReference>
+	</ExternalDataReferences>
+	<DataSetMetadata>
+		<TotalLength>48502</TotalLength>
+		<NumRecords>1</NumRecords>
+		<Organism>lambda</Organism>
+		<Ploidy>Haploid</Ploidy>
+		<Contigs>
+			<Contig Name="lambda_NEB3011" Description="lambda reference" Length="48502" Digest="f627c795efad7ce0050ed42b942d408e"/>
+		</Contigs>
+	</DataSetMetadata>
+</ReferenceSet>

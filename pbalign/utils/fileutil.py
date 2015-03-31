@@ -39,6 +39,7 @@ import os.path as op
 import logging
 from xml.etree import ElementTree as ET
 from pbcore.util.Process import backticks
+from pbdataset.DataSetIO import DataSet
 
 def enum(**enums):
     """Simulate enum."""
@@ -53,11 +54,13 @@ FILE_FORMATS = enum(FASTA="FASTA", PLS="PLS_H5", PLX="PLX_H5",
 VALID_INPUT_FORMATS = (FILE_FORMATS.FASTA, FILE_FORMATS.PLS,
                        FILE_FORMATS.PLX,   FILE_FORMATS.BAS,
                        FILE_FORMATS.BAX,   FILE_FORMATS.FOFN,
-                       FILE_FORMATS.CCS,   FILE_FORMATS.BAM)
+                       FILE_FORMATS.CCS,   FILE_FORMATS.BAM,
+                       FILE_FORMATS.XML)
 
 VALID_REGIONTABLE_FORMATS = (FILE_FORMATS.RGN, FILE_FORMATS.FOFN)
 
-VALID_OUTPUT_FORMATS = (FILE_FORMATS.CMP, FILE_FORMATS.SAM, FILE_FORMATS.BAM)
+VALID_OUTPUT_FORMATS = (FILE_FORMATS.CMP, FILE_FORMATS.SAM,
+                        FILE_FORMATS.BAM, FILE_FORMATS.XML)
 
 def real_ppath(fn):
     """Return real 'python-style' path of a file.
@@ -176,6 +179,17 @@ def getFileFormatsFromFOFN(fofnname):
     return [getFileFormat(f) for f in fs]
 
 
+def XmlToFofn(xmlfile, fofnfile):
+    """
+    Extract datasets in xml file to a fofn.
+    """
+    d = DataSet(xmlfile)
+    fs = [f[5:] for f in d.toFofn() if f.startswith('file:')]
+    with open(fofnfile, 'w') as writer:
+        for f in fs:
+            writer.write(f + "\n")
+
+
 def checkInputFile(filename, validFormats=VALID_INPUT_FORMATS):
     """
     Check whether an input file has the valid file format and exists.
@@ -209,6 +223,12 @@ def checkInputFile(filename, validFormats=VALID_INPUT_FORMATS):
                 raise IOError(errMsg)
             else:
                 fileListRet.append(f)
+
+    if getFileFormat(filename) ==  FILE_FORMATS.XML:
+        import tempfile
+        tmpFile = op.join(tempfile.mkdtemp(), "input.fofn")
+        XmlToFofn(filename, tmpFile)
+        filename = tmpFile
     return real_upath(filename)
 
 
@@ -327,11 +347,12 @@ class ReferenceInfo:
 def checkReferencePath(inRefpath):
     """Validate input reference path.
     Check whether the input reference path exists or not.
-    Input : can be a FASTA file or a reference repository.
+    Input : can be a FASTA file, a XML file or a reference repository.
     Output: [refpath, FASTA_file, None, False, gff], if input is a FASTA file,
             and it is not located within a reference repository.
             [refpath, FASTA_file, SA_file, True, gff], if input is a FASTA
             file, and it is located within a reference repository.
+            [refpath, FASTA_file, None, False, None], if input is a XML
             [refpath, FASTA_file, SA_file, True, gff], if input is a reference
             repository produced by PacBio referenceUploader.
     """
@@ -348,6 +369,16 @@ def checkReferencePath(inRefpath):
         fastaFile = refpath
         # Assume the input FASTA file is also located within a
         # reference repository
+        refinfoxml = op.join(op.split(op.dirname(refpath))[0],
+                             "reference.info.xml")
+    elif getFileFormat(refpath) == FILE_FORMATS.XML:
+        fastaFiles= DataSet(refpath).toFofn()
+        if len(fastaFiles) != 1:
+            errMsg = refpath + " must contain exactly one reference"
+            logging.error(errMsg)
+            raise Exception (errMsg)
+        fastaFile = fastaFiles[0][5:] if fastaFiles[0].startswith('file:') \
+                else fastaFiles[0]
         refinfoxml = op.join(op.split(op.dirname(refpath))[0],
                              "reference.info.xml")
     else:

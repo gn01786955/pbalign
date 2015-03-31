@@ -99,7 +99,7 @@ class PBAlignFiles:
         # the absolute and expanded path. Validate file format.
         if inputFileName is not None and inputFileName != "":
             self.inputFileName = checkInputFile(inputFileName)
-            self.inputFileFormat = getRealFileFormat(inputFileName)
+            self.inputFileFormat = getRealFileFormat(self.inputFileName)
 
     def SetPulseFileName(self, inputFileName, pulseFileName):
         """Verify and assign the pulse file from which pulses can be

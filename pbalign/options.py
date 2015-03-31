@@ -391,14 +391,15 @@ def constructOptionParser(parser=None):
                         help=argparse.SUPPRESS)
 
     # Required options: inputs and outputs.
-    helpstr = "The input file can be a fasta, plx.h5, bax.h5, ccs.h5\n" + \
-              "file or a fofn."
+    helpstr = "The input file can be a FASTA, PLX.H5, BAX.H5, CCS.H5\n" + \
+              ", XML file or a fofn."
     misc_group.add_argument("inputFileName",
                         type=str,
                         action="store",
                         help=helpstr)
 
-    helpstr = "Either a reference fasta file or a reference repository."
+    helpstr = "Either a reference FASTA file, XML file or a reference\n" + \
+              "repository."
     parser.add_argument("referencePath",
                         type=str,
                         action="store",
@@ -407,7 +408,7 @@ def constructOptionParser(parser=None):
     parser.add_argument("outputFileName",
                         type=str,
                         action="store",
-                        help="The output CMP.H5, SAM or BAM file.")
+                        help="The output CMP.H5, SAM, BAM or XML file.")
 
     return parser
 

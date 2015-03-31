@@ -141,18 +141,19 @@ class PBAlignRunner(PBToolRunner):
                 raise ValueError(errMsg)
             args.loadQVs = True
 
+        outFormat = getFileFormat(fileNames.outputFileName)
         if args.loadQVs:
             if fileNames.pulseFileName is None:
                 errMsg = "The input file has to be in bas/pls/ccs.h5 " + \
                          "format, or --pulseFile needs to be specified, "
-            if getFileFormat(fileNames.outputFileName) != FILE_FORMATS.CMP:
+            if outFormat != FILE_FORMATS.CMP:
                 errMsg = "The output file has to be in cmp.h5 format, "
             if errMsg != "":
                 errMsg += "in order to load pulse QVs."
                 logging.error(errMsg)
                 raise ValueError(errMsg)
 
-        if getFileFormat(fileNames.outputFileName) == FILE_FORMATS.BAM \
+        if (outFormat == FILE_FORMATS.BAM or outFormat == FILE_FORMATS.XML) \
             and args.algorithm != "blasr":
             errMsg = "Must choose blasr in order to output a bam file."
             raise ValueError(errMsg)
@@ -178,8 +179,9 @@ class PBAlignRunner(PBToolRunner):
         """
         output, errCode, errMsg = "", 0, ""
 
-        if getFileFormat(outFile) == FILE_FORMATS.SAM or \
-           getFileFormat(outFile) == FILE_FORMATS.BAM :
+        outFormat = getFileFormat(outFile)
+        if outFormat == FILE_FORMATS.SAM or \
+           outFormat == FILE_FORMATS.BAM :
             logging.info("OutputService: Genearte the output SAM/BAM file.")
             logging.debug("OutputService: Move {src} as {dst}".format(
                 src=inSam, dst=outFile))
@@ -187,7 +189,7 @@ class PBAlignRunner(PBToolRunner):
                 shutil.move(real_ppath(inSam), real_ppath(outFile))
             except shutil.Error as e:
                 output, errCode, errMsg = "", 1, str(e)
-        elif getFileFormat(outFile) == FILE_FORMATS.CMP:
+        elif outFormat == FILE_FORMATS.CMP:
             #`samtoh5 inSam outFile -readType readType
             logging.info("OutputService: Genearte the output CMP.H5 " +
                          "file using samtoh5.")
@@ -201,6 +203,18 @@ class PBAlignRunner(PBToolRunner):
             # Execute the command line
             logging.debug("OutputService: Call \"{0}\"".format(cmd))
             output, errCode, errMsg = backticks(cmd)
+        elif outFormat == FILE_FORMATS.XML:
+            logging.info("OutputService: Generating the output XML file")
+            logging.debug("OutputService: Converting {samFile} to {outFile}.".
+                         format(samFile=inSam, outFile=outFile))
+            from pbdataset.DataSetIO import DataSet
+            try:
+                #FIXME: temporary sam/bam files will be deleted eventually,
+                #where to save alignments? Use {outFile}.bam for now.
+                shutil.move(real_ppath(inSam), real_ppath(outFile + ".bam"))
+                DataSet(outFile + ".bam").write("xml:" + outFile)
+            except Exception as e:
+                output, errCode, errMsg = "", 1, str(e)
 
         if errCode != 0:
             errMsg = prog + " returned a non-zero exit status." + errMsg
@@ -250,8 +264,9 @@ class PBAlignRunner(PBToolRunner):
             return 1
 
         # Create a temporary filtered SAM/BAM file as output for FilterService.
-        suffix = ".bam" if (getFileFormat(self.fileNames.outputFileName)
-                            == FILE_FORMATS.BAM) else ".sam"
+        outFormat = getFileFormat(self.fileNames.outputFileName)
+        suffix = ".bam" if (outFormat == FILE_FORMATS.BAM or
+                            outFormat == FILE_FORMATS.XML) else ".sam"
         self.fileNames.filteredSam = self._tempFileManager.\
             RegisterNewTmpFile(suffix=suffix)
 
