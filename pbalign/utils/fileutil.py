@@ -48,16 +48,16 @@ FILE_FORMATS = enum(FASTA="FASTA", PLS="PLS_H5", PLX="PLX_H5",
                     BAS="BAS_H5", BAX="BAX_H5", FOFN="FOFN",
                     SAM="SAM", CMP="CMP_H5", RGN="RGN_H5",
                     SA="SA", XML="XML", UNKNOWN="UNKNOWN",
-                    CCS="CCS_H5")
+                    CCS="CCS_H5", BAM="BAM")
 
 VALID_INPUT_FORMATS = (FILE_FORMATS.FASTA, FILE_FORMATS.PLS,
                        FILE_FORMATS.PLX,   FILE_FORMATS.BAS,
                        FILE_FORMATS.BAX,   FILE_FORMATS.FOFN,
-                       FILE_FORMATS.CCS)
+                       FILE_FORMATS.CCS,   FILE_FORMATS.BAM)
 
 VALID_REGIONTABLE_FORMATS = (FILE_FORMATS.RGN, FILE_FORMATS.FOFN)
 
-VALID_OUTPUT_FORMATS = (FILE_FORMATS.CMP, FILE_FORMATS.SAM)
+VALID_OUTPUT_FORMATS = (FILE_FORMATS.CMP, FILE_FORMATS.SAM, FILE_FORMATS.BAM)
 
 def real_ppath(fn):
     """Return real 'python-style' path of a file.
@@ -127,6 +127,8 @@ def getFileFormat(filename):
         return FILE_FORMATS.FASTA
     elif ext in [".sam"]:
         return FILE_FORMATS.SAM
+    elif ext in [".bam"]:
+        return FILE_FORMATS.BAM
     elif ext in [".sa"]:
         return FILE_FORMATS.SA
     elif ext in [".fofn"]:
@@ -238,7 +240,7 @@ def checkOutputFile(filename):
     """
     filename = real_ppath(filename)
     if not isValidOutputFormat(getFileFormat(filename)):
-        errMsg = "The output file format can only be SAM or CMP.H5."
+        errMsg = "The output file format can only be CMP.H5, SAM or BAM."
         logging.error(errMsg)
         raise ValueError(errMsg)
     try:

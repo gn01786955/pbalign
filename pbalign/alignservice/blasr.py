@@ -35,7 +35,7 @@
 
 from __future__ import absolute_import
 from pbalign.alignservice.align import AlignService
-from pbalign.utils.fileutil import FILE_FORMATS, real_upath
+from pbalign.utils.fileutil import FILE_FORMATS, real_upath, getFileFormat
 import logging
 
 
@@ -96,7 +96,7 @@ class BlasrService(AlignService):
 
         ignoredBinaryOptions = ['-m', '-out', '-V']
         ignoredUnitaryOptions = ['-h', '--help', '--version',
-                                 '-v', '-vv', '-sam']
+                                 '-v', '-vv', '-sam', '-bam']
 
         items = self.__parseAlgorithmOptionItems(options.algorithmOptions)
         i = 0
@@ -211,10 +211,15 @@ class BlasrService(AlignService):
             Output:
                 a command-line string which can be used in bash.
         """
-        cmdStr = "blasr {queryFile} {targetFile} -sam -out {outFile} ".format(
+        cmdStr = "blasr {queryFile} {targetFile} -out {outFile} ".format(
             queryFile=fileNames.queryFileName,
             targetFile=fileNames.targetFileName,
             outFile=fileNames.alignerSamOut)
+
+        if getFileFormat(fileNames.outputFileName) == FILE_FORMATS.BAM:
+            cmdStr += " -bam "
+        else:
+            cmdStr += " -sam "
 
         if ((fileNames.sawriterFileName is not None) and
                 (fileNames.sawriterFileName != "")):

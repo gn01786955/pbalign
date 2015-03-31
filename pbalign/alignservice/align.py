@@ -38,6 +38,7 @@ from copy import copy
 from pbalign.options import importDefaultOptions
 from pbalign.utils.tempfileutil import TempFileManager
 from pbalign.service import Service
+from pbalign.utils.fileutil import getFileFormat, FILE_FORMATS
 
 
 class AlignService (Service):
@@ -184,8 +185,10 @@ class AlignService (Service):
             self._tempFileManager,
             self._fileNames.isWithinRepository)
 
+        suffix = ".bam" if (getFileFormat(self._fileNames.outputFileName)
+                            == FILE_FORMATS.BAM) else ".sam"
         self._fileNames.alignerSamOut = self._tempFileManager.\
-            RegisterNewTmpFile(suffix=".sam")
+            RegisterNewTmpFile(suffix=suffix)
 
         # Generate and execute cmd.
         try:

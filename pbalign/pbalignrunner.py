@@ -152,6 +152,12 @@ class PBAlignRunner(PBToolRunner):
                 logging.error(errMsg)
                 raise ValueError(errMsg)
 
+        if getFileFormat(fileNames.outputFileName) == FILE_FORMATS.BAM \
+            and args.algorithm != "blasr":
+            errMsg = "Must choose blasr in order to output a bam file."
+            raise ValueError(errMsg)
+
+
     def _parseArgs(self):
         """Overwrite ToolRunner.parseArgs(self).
         Parse PBAlignRunner arguments considering both args in argumentList and
@@ -160,11 +166,11 @@ class PBAlignRunner(PBToolRunner):
         pass
 
     def _output(self, inSam, refFile, outFile, readType=None, smrtTitle=False):
-        """Generate a sam or a cmp.h5 file.
+        """Generate a SAM, BAM or a CMP.H5 file.
         Input:
-            inSam   : an input SAM file. (e.g. fileName.filteredSam)
+            inSam   : an input SAM/BAM file. (e.g. fileName.filteredSam)
             refFile : the reference file. (e.g. fileName.targetFileName)
-            outFile : the output SAM or CMP.H5 file.
+            outFile : the output SAM/BAM or CMP.H5 file.
                       (i.e. fileName.outputFileName)
             readType: standard or cDNA or CCS (can be None if not specified)
         Output:
@@ -172,9 +178,9 @@ class PBAlignRunner(PBToolRunner):
         """
         output, errCode, errMsg = "", 0, ""
 
-        if getFileFormat(outFile) == FILE_FORMATS.SAM:
-            #`mv inSam outFile`
-            logging.info("OutputService: Genearte the output SAM file.")
+        if getFileFormat(outFile) == FILE_FORMATS.SAM or \
+           getFileFormat(outFile) == FILE_FORMATS.BAM :
+            logging.info("OutputService: Genearte the output SAM/BAM file.")
             logging.debug("OutputService: Move {src} as {dst}".format(
                 src=inSam, dst=outFile))
             try:
@@ -243,11 +249,13 @@ class PBAlignRunner(PBToolRunner):
         except RuntimeError:
             return 1
 
-        # Create a temporary filtered SAM file as output for FilterService.
+        # Create a temporary filtered SAM/BAM file as output for FilterService.
+        suffix = ".bam" if (getFileFormat(self.fileNames.outputFileName)
+                            == FILE_FORMATS.BAM) else ".sam"
         self.fileNames.filteredSam = self._tempFileManager.\
-            RegisterNewTmpFile(suffix=".sam")
+            RegisterNewTmpFile(suffix=suffix)
 
-        # Call filter service.
+        # Call filter service on SAM or BAM file.
         self._filterService = FilterService(self.fileNames.alignerSamOut,
                                             self.fileNames.targetFileName,
                                             self.fileNames.filteredSam,
@@ -260,7 +268,7 @@ class PBAlignRunner(PBToolRunner):
         except RuntimeError:
             return 1
 
-        # Output all hits either in SAM or CMP.H5.
+        # Output all hits in SAM, BAM or CMP.H5.
         try:
             useSmrtTitle = False
             if (self.args.algorithm != "blasr" or

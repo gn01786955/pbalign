@@ -80,8 +80,8 @@ class PBAlignFiles:
         self.targetFileName = None
         self.sawriterFileName = None
         self.isWithinRepository = False
-        self.alignerSamOut = None   # The sam output file by an aligner
-        self.filteredSam = None     # The filtered sam file.
+        self.alignerSamOut = None   # The sam/bam output file by an aligner
+        self.filteredSam = None     # The filtered sam/bam file.
 
         # There might be an adapter file in the reference repository in
         # directory 'annotations', which can be used by the
@@ -171,8 +171,8 @@ class PBAlignFiles:
         desc += "regionTable:{s}\n".format(s=self.regionTable)
         if self.pulseFileName is not None:
             desc += "Pulse files: {s}\n".format(s=self.pulseFileName)
-        desc += "Aligner's SAM out: {t}\n".format(t=self.alignerSamOut)
-        desc += "Filtered SAM file: {t}\n".format(t=self.filteredSam)
+        desc += "Aligner's SAM/BAM out: {t}\n".format(t=self.alignerSamOut)
+        desc += "Filtered SAM/BAM file: {t}\n".format(t=self.filteredSam)
         if self.adapterGffFileName is not None:
             desc += "Adapter GFF file: {t}\n".format(
                 t=self.adapterGffFileName)

@@ -37,8 +37,7 @@ in an input SAM file according to filtering criteria."""
 from __future__ import absolute_import
 import logging
 from pbalign.service import Service
-from pbalign.utils.fileutil import isExist
-
+from pbalign.utils.fileutil import getFileFormat, FILE_FORMATS, isExist
 
 class FilterService(Service):
     """ Call samFilter to filter low quality hits and apply multiple hits
@@ -58,17 +57,17 @@ class FilterService(Service):
                  adapterGffFile=None):
         """Initialize a FilterService object.
             Input:
-                inSamFile: an input SAM file
+                inSamFile: an input SAM/BAM file
                 refFile  : the reference FASTA file
-                outSAM   : an output SAM file
+                outSAM   : an output SAM/BAM file
                 alnServiceName: the name of the align service
                 scoreSign: score sign of the aligner, can be -1 or 1
                 options  : pbalign options
                 adapterGffFile: a GFF file storing all the adapters
         """
-        self.inSamFile = inSamFile
+        self.inSamFile = inSamFile # sam|bam
         self.refFile = refFile
-        self.outSamFile = outSamFile
+        self.outSamFile = outSamFile # sam|bam
         self.alnServiceName = alnServiceName
         self.scoreSign = scoreSign
         self.options = options
@@ -83,7 +82,7 @@ class FilterService(Service):
                            self.adapterGffFile)
 
     def _toCmd(self, inSamFile, refFile, outSamFile,
-               alnServiceName, scoreSign, options, adapterGffFile):
+            alnServiceName, scoreSign, options, adapterGffFile):
         """ Generate a samFilter command line from options.
             Input:
                 inSamFile : the input SAM file
@@ -95,6 +94,12 @@ class FilterService(Service):
             Output:
                 a command-line string
         """
+        if getFileFormat(inSamFile) == FILE_FORMATS.BAM:
+            # TODO: use bamFilter instead
+            return "cp {inFile} {outFile}".format(inFile=inSamFile,
+                    outFile=outSamFile)
+
+        # else samfilter
         cmdStr = self.progName + \
             " {inSamFile} {refFile} {outSamFile} ".format(
                 inSamFile=inSamFile,
@@ -133,6 +138,7 @@ class FilterService(Service):
             isExist(adapterGffFile):
             cmdStr += " -filterAdapterOnly {gffFile}".format(
                     gffFile=adapterGffFile)
+
         return cmdStr
 
     def run(self):
