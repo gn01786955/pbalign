@@ -216,7 +216,7 @@ class BlasrService(AlignService):
             targetFile=fileNames.targetFileName,
             outFile=fileNames.alignerSamOut)
 
-        if getFileFormat(fileNames.outputFileName) == FILE_FORMATS.BAM:
+        if getFileFormat(fileNames.alignerSamOut) == FILE_FORMATS.BAM:
             cmdStr += " -bam "
         else:
             cmdStr += " -sam "
