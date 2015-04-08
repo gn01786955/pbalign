@@ -44,7 +44,7 @@ class Test_Options(unittest.TestCase):
             "--algorithmOptions = '-noSplitSubreads " + \
             "-maxMatch 30 -nCandidates 30'",
             "# Some comments",
-            "--scoreFunction = blasr",
+            #"--scoreFunction = blasr",
             "--hitPolicy     = random",
             "--maxDivergence = 40",
             "--debug")
@@ -65,7 +65,7 @@ class Test_Options(unittest.TestCase):
 
         self.assertEqual("".join(options.algorithmOptions),
                          "-noSplitSubreads -maxMatch 30 -nCandidates 30")
-        self.assertEqual(options.scoreFunction,      "blasr")
+        #self.assertEqual(options.scoreFunction,      "blasr")
         self.assertEqual(options.hitPolicy,          "random")
         self.assertEqual(int(options.maxDivergence), 40)
 
