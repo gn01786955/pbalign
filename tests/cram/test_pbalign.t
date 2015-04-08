@@ -283,20 +283,20 @@ $ tail -n+8 $SAMOUT  | cut -f 1-11 | sort | md5sum
   0
 
 #Test pbalign with xml in bam out
-  $ Q=subread_dataset1.xml
-  $ T=reference_lambda.xml
+  $ Q=$DATDIR/subread_dataset1.xml
+  $ T=$DATDIR/reference_lambda.xml
   $ O=$OUTDIR/xml_in_bam_out.bam
   $ rm -f $O
-  $ pbalign $Q $T $O
+  $ pbalign $Q $T $O --algorithmOptions=" -holeNumbers 1-2000"
   $ echo $?
   0
 
 #Test pbalign with xml in xml out
-  $ Q=subread_dataset1.xml
-  $ T=reference_lambda.xml
+  $ Q=$DATDIR/subread_dataset1.xml
+  $ T=$DATDIR/reference_lambda.xml
   $ O=$OUTDIR/xml_in_xml_out.xml
   $ rm -f $O
-  $ pbalign $Q $T $O
+  $ pbalign $Q $T $O --algorithmOptions=" -holeNumbers 1-2000"
   $ echo $?
   0
 

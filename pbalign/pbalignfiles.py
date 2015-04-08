@@ -33,14 +33,15 @@
 """This script defines class PBALignFiles."""
 
 from __future__ import absolute_import
-import logging
 from pbalign.utils.fileutil import checkInputFile, getRealFileFormat, \
     checkOutputFile, checkReferencePath, checkRegionTableFile, \
     getFileFormat, FILE_FORMATS
 
 
 class PBAlignFiles:
+
     """PBAlignFiles contains files that will be used by pbalign."""
+
     def __init__(self, inputFileName=None, referencePath=None,
                  outputFileName=None, regionTable=None,
                  pulseFileName=None):
@@ -82,6 +83,11 @@ class PBAlignFiles:
         self.isWithinRepository = False
         self.alignerSamOut = None   # The sam/bam output file by an aligner
         self.filteredSam = None     # The filtered sam/bam file.
+
+        self.outBamFileName = None     # filtered bam, not sorted
+        self.sortedBamFileName = None  # sorted bam output
+        self.outBaiFileName = None     # output *.bai bam index
+        self.outPbiFileName = None     # output *.pbi pacbio bam index
 
         # There might be an adapter file in the reference repository in
         # directory 'annotations', which can be used by the
@@ -133,10 +139,18 @@ class PBAlignFiles:
 
     def SetOutputFileName(self, outputFileName):
         """Validate the user-specified output file and get the absolute and
-        expanded path.
+        expanded path. If output file format is XML or BAM, set sorted BAM
+        file name, BAM index bai file and PacBio BAM index pbi file.
         """
         if outputFileName is not None and outputFileName != "":
             self.outputFileName = checkOutputFile(outputFileName)
+            if getFileFormat(self.outputFileName) in [FILE_FORMATS.BAM,
+                    FILE_FORMATS.XML]:
+                prefix = str(self.outputFileName[0:-3])
+                self.outBamFileName = prefix + "bam"
+                self.sortedBamFileName = prefix + "sorted.bam"
+                self.outBaiFileName = self.sortedBamFileName + ".bai"
+                self.outPbiFileName = self.sortedBamFileName + ".pbi"
 
     def SetRegionTable(self, regionTable):
         """Validate the user-specified region table and get the absolute and
@@ -167,8 +181,10 @@ class PBAlignFiles:
         desc += "Output file: {o}\n".format(o=self.outputFileName)
         desc += "Query file : {q}\n".format(q=self.queryFileName)
         desc += "Target file: {t}\n".format(t=self.targetFileName)
-        desc += "Suffix array file: {s}\n".format(s=self.sawriterFileName)
-        desc += "regionTable:{s}\n".format(s=self.regionTable)
+        if self.sawriterFileName is not None:
+            desc += "Suffix array file: {s}\n".format(s=self.sawriterFileName)
+        if self.regionTable is not None:
+            desc += "Region table:{s}\n".format(s=self.regionTable)
         if self.pulseFileName is not None:
             desc += "Pulse files: {s}\n".format(s=self.pulseFileName)
         desc += "Aligner's SAM/BAM out: {t}\n".format(t=self.alignerSamOut)
@@ -176,7 +192,16 @@ class PBAlignFiles:
         if self.adapterGffFileName is not None:
             desc += "Adapter GFF file: {t}\n".format(
                 t=self.adapterGffFileName)
+        if self.outBamFileName is not None:
+            desc += "Out bam file: {b}\n".format(b=self.outBamFileName)
+        if self.sortedBamFileName is not None:
+            desc += "Sorted bam file: {b}\n".format(b=self.sortedBamFileName)
+        if self.outBaiFileName is not None:
+            desc += "Bam index file: {b}\n".format(b=self.outBaiFileName)
+        if self.outPbiFileName is not None:
+            desc += "PacBio Bam index file: {p}\n".format(p=self.outPbiFileName)
+
         return desc
 
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    p = PBAlignFiles("lambda.fasta", "lambda_ref.fasta", "tmp.sam")

@@ -55,11 +55,13 @@ from pbalign.utils.tempfileutil import TempFileManager
 from pbalign.pbalignfiles import PBAlignFiles
 from pbalign.filterservice import FilterService
 from pbalign.forquiverservice.forquiver import ForQuiverService
+from pbalign.bampostservice import BamPostService
 from pbcore.util.Process import backticks
 from pbcore.util.ToolRunner import PBToolRunner
 
 
 class PBAlignRunner(PBToolRunner):
+
     """Tool runner."""
 
     def __init__(self, argumentList):
@@ -158,7 +160,6 @@ class PBAlignRunner(PBToolRunner):
             errMsg = "Must choose blasr in order to output a bam file."
             raise ValueError(errMsg)
 
-
     def _parseArgs(self):
         """Overwrite ToolRunner.parseArgs(self).
         Parse PBAlignRunner arguments considering both args in argumentList and
@@ -181,7 +182,7 @@ class PBAlignRunner(PBToolRunner):
 
         outFormat = getFileFormat(outFile)
         if outFormat == FILE_FORMATS.SAM or \
-           outFormat == FILE_FORMATS.BAM :
+           outFormat == FILE_FORMATS.BAM:
             logging.info("OutputService: Genearte the output SAM/BAM file.")
             logging.debug("OutputService: Move {src} as {dst}".format(
                 src=inSam, dst=outFile))
@@ -209,10 +210,10 @@ class PBAlignRunner(PBToolRunner):
                          format(samFile=inSam, outFile=outFile))
             from pbdataset.DataSetIO import DataSet
             try:
-                #FIXME: temporary sam/bam files will be deleted eventually,
-                #where to save alignments? Use {outFile}.bam for now.
-                shutil.move(real_ppath(inSam), real_ppath(outFile + ".bam"))
-                DataSet(outFile + ".bam").write("xml:" + outFile)
+                # Write bam to ${out}.bam and save file path to ${out}.xml
+                outBam = str(outFile[0:-3]) + "bam"
+                shutil.move(real_ppath(inSam), real_ppath(outBam))
+                DataSet(real_ppath(outBam)).write("xml:" + outFile)
             except Exception as e:
                 output, errCode, errMsg = "", 1, str(e)
 
@@ -226,19 +227,6 @@ class PBAlignRunner(PBToolRunner):
         """ Clean up temporary files and intermediate results. """
         logging.debug("Clean up temporary files and directories.")
         self._tempFileManager.CleanUp(realDelete)
-
-#    def _setupLogging(self):
-#        LOG_FORMAT = "%(asctime)s [%(levelname)s] %(message)s"
-#        if self.args.verbosity >= 2:
-#            print "logLevel = debug"
-#            logLevel = logging.DEBUG
-#        elif self.args.verbosity == 1:
-#            print "logLevel = info"
-#            logLevel = logging.INFO
-#        else:
-#            print "logLevel = warn"
-#            logLevel = logging.WARN
-#        logging.basicConfig(level=logLevel, format=LOG_FORMAT)
 
     def run(self):
         """
@@ -265,8 +253,8 @@ class PBAlignRunner(PBToolRunner):
 
         # Create a temporary filtered SAM/BAM file as output for FilterService.
         outFormat = getFileFormat(self.fileNames.outputFileName)
-        suffix = ".bam" if (outFormat == FILE_FORMATS.BAM or
-                            outFormat == FILE_FORMATS.XML) else ".sam"
+        suffix = ".bam" if outFormat in \
+                [FILE_FORMATS.BAM, FILE_FORMATS.XML] else ".sam"
         self.fileNames.filteredSam = self._tempFileManager.\
             RegisterNewTmpFile(suffix=suffix)
 
@@ -291,18 +279,25 @@ class PBAlignRunner(PBToolRunner):
                 useSmrtTitle = True
 
             self._output(
-                self.fileNames.filteredSam,
-                self.fileNames.targetFileName,
-                self.fileNames.outputFileName,
-                self.args.readType,
-                useSmrtTitle)
+                inSam=self.fileNames.filteredSam,
+                refFile=self.fileNames.targetFileName,
+                outFile=self.fileNames.outputFileName,
+                readType=self.args.readType,
+                smrtTitle=useSmrtTitle)
         except RuntimeError:
             return 1
 
-        # Call post service for quiver.
-        if self.args.forQuiver or self.args.loadQVs:
+        postService = None
+        if outFormat == FILE_FORMATS.CMP and \
+            self.args.forQuiver or self.args.loadQVs:
+            # Call post service for quiver.
             postService = ForQuiverService(self.fileNames,
                                            self.args)
+        elif outFormat in [FILE_FORMATS.BAM, FILE_FORMATS.XML]:
+            # Sort/make index for BAM output.
+            postService = BamPostService(self.fileNames)
+
+        if postService is not None:
             try:
                 postService.run()
             except RuntimeError:
@@ -318,6 +313,7 @@ class PBAlignRunner(PBToolRunner):
 
 
 def main():
+    """Main entry."""
     pbobj = PBAlignRunner(sys.argv[1:])
     return pbobj.start()
 

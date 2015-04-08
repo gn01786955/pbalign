@@ -41,6 +41,7 @@ from xml.etree import ElementTree as ET
 from pbcore.util.Process import backticks
 from pbdataset.DataSetIO import DataSet
 
+
 def enum(**enums):
     """Simulate enum."""
     return type('Enum', (), enums)
@@ -61,6 +62,7 @@ VALID_REGIONTABLE_FORMATS = (FILE_FORMATS.RGN, FILE_FORMATS.FOFN)
 
 VALID_OUTPUT_FORMATS = (FILE_FORMATS.CMP, FILE_FORMATS.SAM,
                         FILE_FORMATS.BAM, FILE_FORMATS.XML)
+
 
 def real_ppath(fn):
     """Return real 'python-style' path of a file.
@@ -101,6 +103,7 @@ def isExist(ff):
     cmd = "ls %s" % real_upath(ff)
     _output, errCode, _errMsg = backticks(cmd)
     return (errCode == 0)
+
 
 def isValidInputFormat(ff):
     """Return True if ff is a valid input file format."""
@@ -260,7 +263,7 @@ def checkOutputFile(filename):
     """
     filename = real_ppath(filename)
     if not isValidOutputFormat(getFileFormat(filename)):
-        errMsg = "The output file format can only be CMP.H5, SAM or BAM."
+        errMsg = "The output file format can only be CMP.H5, SAM, BAM or XML."
         logging.error(errMsg)
         raise ValueError(errMsg)
     try:
@@ -274,7 +277,9 @@ def checkOutputFile(filename):
 
 
 class ReferenceInfo:
+
     """Parse reference.info.xml in reference path."""
+
     def __init__(self, fileName):
         fileName = real_ppath(fileName)
         if getFileFormat(fileName) != FILE_FORMATS.XML:
@@ -372,11 +377,11 @@ def checkReferencePath(inRefpath):
         refinfoxml = op.join(op.split(op.dirname(refpath))[0],
                              "reference.info.xml")
     elif getFileFormat(refpath) == FILE_FORMATS.XML:
-        fastaFiles= DataSet(refpath).toFofn()
+        fastaFiles = DataSet(refpath).toFofn()
         if len(fastaFiles) != 1:
             errMsg = refpath + " must contain exactly one reference"
             logging.error(errMsg)
-            raise Exception (errMsg)
+            raise Exception(errMsg)
         fastaFile = fastaFiles[0][5:] if fastaFiles[0].startswith('file:') \
                 else fastaFiles[0]
         refinfoxml = op.join(op.split(op.dirname(refpath))[0],
@@ -420,7 +425,7 @@ def checkReferencePath(inRefpath):
     return real_upath(refpath), real_upath(fastaFile), sawriterFile, \
            isWithinRepository, adapterGffFile
 
-#if __name__ == "__main__":
+# if __name__ == "__main__":
 #    refPath = "/opt/smrtanalysis" + \
 #              "/common/references/lambda/"
 #    refpath, faFile, saFile, isWithinRepository = checkReferencePath(refPath)
