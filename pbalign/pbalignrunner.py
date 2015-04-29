@@ -83,8 +83,8 @@ class PBAlignRunner(PBToolRunner):
         # However in parseOptions, arguments are parsed twice to import config
         # options and then overwrite them with argumentList (e.g. command-line)
         # options.
-        self.args.verbosity = 0 if (self.args.verbosity is None) else \
-            int(self.args.verbosity) / 2
+        self.args.verbosity = 1 if (self.args.verbosity is None) else \
+            (int(self.args.verbosity) / 2 + 1)
 
     def getVersion(self):
         """Return version."""

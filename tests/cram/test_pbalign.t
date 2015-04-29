@@ -7,22 +7,29 @@ Test pbalign
   $ DATDIR=$CURDIR/../data
   $ OUTDIR=$CURDIR/../out
   $ STDDIR=$CURDIR/../stdout
+  $ STDSIVDIR=/mnt/secondary-siv/testdata/pbalign-unittest/stdout/
+
+  $ TMP1=$$.tmp.out
+  $ TMP2=$$.tmp.stdout
+  $ SAMTOM4=samtom4
 
 #Test pbalign with all combinations of input & output formats
 #input, reference and output formats are: fasta, fasta, and sam/cmp.h5
-  $ READFILE=$DATDIR/lambda_query.fasta
-  $ REFFILE="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+  $ Q=$DATDIR/lambda_query.fasta
+  $ T="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
 
-  $ SAMOUT=$OUTDIR/lambda.sam
-  $ CMPOUT=$OUTDIR/lambda.cmp.h5
+  $ NAME=lambda
+  $ SAMOUT=$OUTDIR/$NAME.sam
+  $ CMPOUT=$OUTDIR/$NAME.cmp.h5
+  $ M4OUT=$OUTDIR/$NAME.m4
+  $ M4STDOUT=$STDSIVDIR/$NAME.m4
 
-  $ rm -f $SAMOUT $CMPOUT
-  $ pbalign $READFILE $REFFILE $SAMOUT
-#TODO: to make std sam output because of change 148080, 148100, 148101
-$ tail -n+6 $SAMOUT | cut -f 1-11 | sort | md5sum
-ea31763bc847a6c75d3ddb5fb6036489  -
+  $ rm -f $SAMOUT $CMPOUT $M4OUT
+  $ pbalign $Q $T $SAMOUT 2>/dev/null
+  $ $SAMTOM4 $SAMOUT $T $TMP1 && sort $TMP1 > $M4OUT && rm $TMP1
+  $ diff $M4OUT $M4STDOUT
 
-  $ pbalign $READFILE $REFFILE $CMPOUT
+  $ pbalign $Q $T $CMPOUT 2>/dev/null
   $ h5dump -g /ref000001 $CMPOUT > tmpfile 
   $ sed -n '2,11p' tmpfile
   GROUP "/ref000001" {
@@ -37,21 +44,22 @@ ea31763bc847a6c75d3ddb5fb6036489  -
            (42): 34, 17, 136, 136, 136, 34, 68, 34, 136, 17, 136, 17, 17, 68,
   $ rm tmpfile
  
-
-
 #input, reference and output formats are: fasta, folder and sam/cmp.h5
-  $ READFILE=$DATDIR/lambda_query.fasta
-  $ REFFILE=/mnt/secondary-siv/references/lambda/
+  $ Q=$DATDIR/lambda_query.fasta
+  $ T=/mnt/secondary-siv/references/lambda/
 
-  $ SAMOUT=$OUTDIR/lambda2.sam
-  $ CMPOUT=$OUTDIR/lambda2.cmp.h5
+  $ NAME=lambda2
+  $ SAMOUT=$OUTDIR/$NAME.sam
+  $ CMPOUT=$OUTDIR/$NAME.cmp.h5
+  $ M4OUT=$OUTDIR/$NAME.m4
+  $ M4STDOUT=$STDSIVDIR/$NAME.m4
 
-  $ rm -f $SAMOUT $CMPOUT
-  $ pbalign $READFILE $REFFILE $SAMOUT
-$ tail -n+6 $SAMOUT  | cut -f 1-11 | sort | md5sum
-ea31763bc847a6c75d3ddb5fb6036489  -
+  $ rm -f $SAMOUT $CMPOUT $M4OUT
+  $ pbalign $Q $T $SAMOUT 2>/dev/null
+  $ $SAMTOM4 $SAMOUT $T/sequence/lambda.fasta $TMP1 && sort $TMP1 > $M4OUT && rm $TMP1
+  $ diff $M4OUT $M4STDOUT
 
-  $ pbalign $READFILE $REFFILE $CMPOUT
+  $ pbalign $Q $T $CMPOUT 2>/dev/null
   $ h5dump -g /ref000001 $CMPOUT > tmpfile 
   $ sed -n '2,11p' tmpfile
   GROUP "/ref000001" {
@@ -68,18 +76,21 @@ ea31763bc847a6c75d3ddb5fb6036489  -
 
 
 #input, reference and output formats are: fofn, fasta and sam/cmp.h5
-  $ READFILE=$DATDIR/lambda_bax.fofn
-  $ REFFILE="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+  $ Q=$DATDIR/lambda_bax.fofn
+  $ T="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
 
-  $ SAMOUT=$OUTDIR/lambda3.sam
-  $ CMPOUT=$OUTDIR/lambda3.cmp.h5
+  $ NAME=lambda3
+  $ SAMOUT=$OUTDIR/$NAME.sam
+  $ CMPOUT=$OUTDIR/$NAME.cmp.h5
+  $ M4OUT=$OUTDIR/$NAME.m4
+  $ M4STDOUT=$STDSIVDIR/$NAME.m4
 
-  $ rm -f $SAMOUT $CMPOUT
-  $ pbalign $READFILE $REFFILE $SAMOUT
-$ tail -n+6 $SAMOUT  | cut -f 1-11 | sort | md5sum
-e5c29fba1efbbfbe164fa2797408dbf6  -
+  $ rm -f $SAMOUT $CMPOUT $M4OUT
+  $ pbalign $Q $T $SAMOUT 2>/dev/null
+  $ $SAMTOM4 $SAMOUT $T $TMP1 && sort $TMP1 > $M4OUT && rm $TMP1
+  $ diff $M4OUT $M4STDOUT
 
-  $ pbalign $READFILE $REFFILE $CMPOUT
+  $ pbalign $Q $T $CMPOUT 2>/dev/null
   $ h5dump -g /ref000001 $CMPOUT > tmpfile 
   $ sed -n '2,11p' tmpfile
   GROUP "/ref000001" {
@@ -96,18 +107,21 @@ e5c29fba1efbbfbe164fa2797408dbf6  -
 
 
 #input, reference and output formats are: fofn, folder and sam/cmp.h5
-  $ READFILE=$DATDIR/lambda_bax.fofn
-  $ REFFILE=/mnt/secondary-siv/references/lambda/
+  $ Q=$DATDIR/lambda_bax.fofn
+  $ T=/mnt/secondary-siv/references/lambda/
 
-  $ SAMOUT=$OUTDIR/lambda4.sam
-  $ CMPOUT=$OUTDIR/lambda4.cmp.h5
+  $ NAME=lambda4
+  $ SAMOUT=$OUTDIR/$NAME.sam
+  $ CMPOUT=$OUTDIR/$NAME.cmp.h5
+  $ M4OUT=$OUTDIR/$NAME.m4
+  $ M4STDOUT=$STDSIVDIR/$NAME.m4
 
-  $ rm -f $SAMOUT $CMPOUT
-  $ pbalign $READFILE $REFFILE $SAMOUT
-$ tail -n+6 $SAMOUT  | cut -f 1-11 | sort | md5sum
-e5c29fba1efbbfbe164fa2797408dbf6  -
+  $ rm -f $SAMOUT $CMPOUT $M4OUT
+  $ pbalign $Q $T $SAMOUT 2>/dev/null
+  $ $SAMTOM4 $SAMOUT $T/sequence/lambda.fasta $TMP1 && sort $TMP1 > $M4OUT && rm $TMP1
+  $ diff $M4OUT $M4STDOUT
 
-  $ pbalign $READFILE $REFFILE $CMPOUT
+  $ pbalign $Q $T $CMPOUT 2>/dev/null
   $ h5dump -g /ref000001 $CMPOUT > tmpfile 
   $ sed -n '2,11p' tmpfile
   GROUP "/ref000001" {
@@ -124,103 +138,105 @@ e5c29fba1efbbfbe164fa2797408dbf6  -
  
 
 #Test --maxDivergence --minAnchorSize --minAccuracy 
-  $ READFILE=$DATDIR/lambda_query.fasta
-  $ REFFILE="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+  $ Q=$DATDIR/lambda_query.fasta
+  $ T="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
 
-  $ SAMOUT=$OUTDIR/lambda5.sam
+  $ NAME=lambda5
+  $ SAMOUT=$OUTDIR/$NAME.sam
+  $ M4OUT=$OUTDIR/$NAME.m4
+  $ M4STDOUT=$STDSIVDIR/$NAME.m4
 
-  $ rm -f $SAMOUT
-  $ pbalign --maxDivergence 40 --minAnchorSize 20 --minAccuracy 80 $READFILE $REFFILE $SAMOUT 
-$ tail -n+6 $SAMOUT  | cut -f 1-11 | sort | md5sum
-29f8897b8ee6d4b7fff126d374edb306  -
+  $ rm -f $SAMOUT $M4OUT
+  $ pbalign --maxDivergence 40 --minAnchorSize 20 --minAccuracy 80 $Q $T $SAMOUT 2>/dev/null
+  $ $SAMTOM4 $SAMOUT $T $TMP1 && sort $TMP1 > $M4OUT && rm $TMP1
+  $ diff $M4OUT $M4STDOUT
 
 #Test whether pbalign interprets minAccuracy and maxDivergence correclty.
-  $ rm -f $SAMOUT
-  $ pbalign --maxDivergence 0.4 --minAnchorSize 20 --minAccuracy 0.8 $READFILE $REFFILE $SAMOUT 
-$ tail -n+6 $SAMOUT  | cut -f 1-11 | sort | md5sum
-29f8897b8ee6d4b7fff126d374edb306  -
+  $ rm -f $SAMOUT $M4OUT
+  $ pbalign --maxDivergence 0.4 --minAnchorSize 20 --minAccuracy 0.8 $Q $T $SAMOUT 2>/dev/null 
+  $ $SAMTOM4 $SAMOUT $T $TMP1 && sort $TMP1 > $M4OUT && rm $TMP1
+  $ diff $M4OUT $M4STDOUT
 
 #Test --hitPolicy  random
-  $ SAMOUT=$OUTDIR/lambda_hitPolicy_random.sam
+  $ NAME=lambda_hitPolicy_random
+  $ SAMOUT=$OUTDIR/$NAME.sam
+  $ M4OUT=$OUTDIR/$NAME.m4
+  $ M4STDOUT=$STDSIVDIR/$NAME.m4
 
-  $ rm -f $SAMOUT
-  $ pbalign --hitPolicy random --seed 1 $READFILE $REFFILE $SAMOUT 
-$ tail -n+6 $SAMOUT  | cut -f 1-11 | sort | md5sum
-ea31763bc847a6c75d3ddb5fb6036489  -
+  $ rm -f $SAMOUT $M4OUT
+  $ pbalign --hitPolicy random --seed 1 $Q $T $SAMOUT 2>/dev/null
+  $ $SAMTOM4 $SAMOUT $T $TMP1 && sort $TMP1 > $M4OUT && rm $TMP1
+  $ diff $M4OUT $M4STDOUT
 
 #Test --hitPolicy  all
-  $ SAMOUT=$OUTDIR/lambda_hitPolicy_all.sam
+  $ NAME=lambda_hitPolicy_all
+  $ SAMOUT=$OUTDIR/$NAME.sam
+  $ M4OUT=$OUTDIR/$NAME.m4
+  $ M4STDOUT=$STDSIVDIR/$NAME.m4
 
-  $ rm -f $SAMOUT
-  $ pbalign --hitPolicy all $READFILE $REFFILE $SAMOUT 
-$ tail -n+6 $SAMOUT  | cut -f 1-11 | sort | md5sum
-2022614eb99fe3288c332aadcfefe739  -
+  $ rm -f $SAMOUT $M4OUT
+  $ pbalign --hitPolicy all $Q $T $SAMOUT 2>/dev/null
+  $ $SAMTOM4 $SAMOUT $T $TMP1 && sort $TMP1 > $M4OUT && rm $TMP1
+  $ diff $M4OUT $M4STDOUT
 
 
 #Test --hitPolicy  randombest
-  $ SAMOUT=$OUTDIR/lambda_hitPolicy_randombest.sam
+  $ NAME=lambda_hitPolicy_randombest
+  $ SAMOUT=$OUTDIR/$NAME.sam
+  $ M4OUT=$OUTDIR/$NAME.m4
+  $ M4STDOUT=$STDSIVDIR/$NAME.m4
 
-  $ rm -f $SAMOUT
-  $ pbalign  --hitPolicy randombest --seed 1 $READFILE $REFFILE $SAMOUT
-$ tail -n+6 $SAMOUT  | cut -f 1-11 | sort | md5sum
-ea31763bc847a6c75d3ddb5fb6036489  -
-
-
-#Disable Test --scoreFunction
-#  $ SAMOUT=$OUTDIR/lambda_scoreFunction_editdist.sam
-#
-#  $ rm -f $SAMOUT
-#  $ pbalign $READFILE $REFFILE $SAMOUT --scoreFunction editdist
-
+  $ rm -f $SAMOUT $M4OUT
+  $ pbalign  --hitPolicy randombest --seed 1 $Q $T $SAMOUT 2>/dev/null
+  $ $SAMTOM4 $SAMOUT $T $TMP1 && sort $TMP1 > $M4OUT && rm $TMP1
+  $ diff $M4OUT $M4STDOUT
 
 #Test --hitPolicy  allbest
-  $ READFILE=$DATDIR/example_read.fasta
-  $ REFFILE=$DATDIR/example_ref.fasta
+  $ Q=$DATDIR/example_read.fasta
+  $ T=$DATDIR/example_ref.fasta
   $ SAMOUT=$OUTDIR/hitPolicy_allbest.sam
 
   $ rm -f $SAMOUT
-  $ pbalign --hitPolicy allbest $READFILE $REFFILE $SAMOUT 
-$ tail -n+8 $SAMOUT  | cut -f 1-11 | sort | md5sum
-6e68a0902f282c25526e14e5516e663b  -
+  $ pbalign --hitPolicy allbest $Q $T $SAMOUT 2>/dev/null
 
 #Test --useccs=useccsdenovo, whether attribute /ReadType is 'CCS'
-  $ READFILE=$DATDIR/lambda_bax.fofn
-  $ REFFILE="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+  $ Q=$DATDIR/lambda_bax.fofn
+  $ T="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
   $ CMPOUT=$OUTDIR/lambda_denovo.cmp.h5
 
   $ rm -f $CMPOUT
-  $ pbalign $READFILE $REFFILE $CMPOUT --useccs=useccsdenovo --algorithmOptions=" -holeNumbers 0-100"
+  $ pbalign $Q $T $CMPOUT --useccs=useccsdenovo --algorithmOptions=" -holeNumbers 0-100" 2>/dev/null
   $ h5dump -a /ReadType $CMPOUT | grep "CCS"
      (0): "CCS"
 
 #Test --forQuiver can not be used together with --useccs
-  $ pbalign $READFILE $REFFILE $CMPOUT --useccs=useccsdenovo --algorithmOptions=" -holeNumbers 0-100" --forQuiver 1>/dev/null 2>/dev/null || echo 'fail as expected'
+  $ pbalign $Q $T $CMPOUT --useccs=useccsdenovo --algorithmOptions=" -holeNumbers 0-100" --forQuiver 1>/dev/null 2>/dev/null || echo 'fail as expected'
   fail as expected
 
 
 #Test whether pbalign can produce sam output for non-PacBio reads
-#  $ READFILE=$DATDIR/notSMRT.fasta
-#  $ REFFILE="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+#  $ Q=$DATDIR/notSMRT.fasta
+#  $ T="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
 #  $ SAMOUT=$OUTDIR/notSMRT.sam
 #
 #  $ rm -f $SAMOUT $CMPOUT
-#  $ pbalign $READFILE $REFFILE $SAMOUT
+#  $ pbalign $Q $T $SAMOUT 2>/dev/null
 
 
 # Test whether (ccs.h5) produces
 # identical results as (bas.h5 and --useccs=useccsdenovo).
-  $ READFILE=$DATDIR/test_ccs.fofn 
-  $ REFFILE=/mnt/secondary-siv/references/ecoli_k12_MG1655/sequence/ecoli_k12_MG1655.fasta
+  $ Q=$DATDIR/test_ccs.fofn 
+  $ T=/mnt/secondary-siv/references/ecoli_k12_MG1655/sequence/ecoli_k12_MG1655.fasta
   $ CCS_CMPOUT=$OUTDIR/test_ccs.cmp.h5
 
   $ rm -f $CCS_CMPOUT
-  $ pbalign $READFILE $REFFILE $CCS_CMPOUT
+  $ pbalign $Q $T $CCS_CMPOUT 2>/dev/null
 
-  $ READFILE=$DATDIR/test_bas.fofn
+  $ Q=$DATDIR/test_bas.fofn
   $ BAS_CMPOUT=$OUTDIR/test_bas.cmp.h5
 
   $ rm -f $BAS_CMPOUT
-  $ pbalign $READFILE $REFFILE $BAS_CMPOUT --useccs=useccsdenovo
+  $ pbalign $Q $T $BAS_CMPOUT --useccs=useccsdenovo 2>/dev/null
 
   $ h5diff $CCS_CMPOUT $BAS_CMPOUT /AlnGroup  /AlnGroup
   $ h5diff $CCS_CMPOUT $BAS_CMPOUT /AlnInfo   /AlnInfo
@@ -230,36 +246,36 @@ $ tail -n+8 $SAMOUT  | cut -f 1-11 | sort | md5sum
 
 
 #Test pbalign with -filterAdapterOnly
-  $ READFILE=$DATDIR/test_filterAdapterOnly.fofn
-  $ REFDIR=/mnt/secondary-siv/testdata/pbalign-unittest/data/references/H1_6_Scal_6x/
-  $ OUTPUT=$OUTDIR/test_filterAdapterOnly.sam
-  $ rm -f $OUTPUT
-  $ pbalign $READFILE $REFDIR $OUTPUT --filterAdapterOnly --algorithmOptions=" -holeNumbers 10817,14760" --seed=1 
-  $ tail -n+6 $OUTPUT | cut -f 1-4
+  $ Q=$DATDIR/test_filterAdapterOnly.fofn
+  $ T=/mnt/secondary-siv/testdata/pbalign-unittest/data/references/H1_6_Scal_6x/
+  $ O=$OUTDIR/test_filterAdapterOnly.sam
+  $ rm -f $O
+  $ pbalign $Q $T $O --filterAdapterOnly --algorithmOptions=" -holeNumbers 10817,14760" --seed=1 2>/dev/null
+  $ tail -n+6 $O | cut -f 1-4
 
 # Test pbalign with --pulseFile
 # This is an experimental option which goes only with gmap,
 # it enables users to bypass the pls2fasta step and use their own fasta 
 # file instead, while keep the ability of generating cmp.h5 files with pulses 
-# (i.e., --forQuiver). Eventually, we need to support --algorithm=blasr.
-  $ OUTFILE=$OUTDIR/test_pulseFile.cmp.h5
-  $ REFPATH=/mnt/secondary-siv/references/Ecoli_K12_DH10B/
-  $ REFFILE=/mnt/secondary-siv/references/Ecoli_K12_DH10B/sequence/Ecoli_K12_DH10B.fasta
-  $ pbalign $DATDIR/test_pulseFile.fasta $REFPATH $OUTFILE --pulseFile $DATDIR/test_pulseFile.fofn --forQuiver --algorithm gmap --byread
+# (i.e., --forQuiver).
+  $ O=$OUTDIR/test_pulseFile.cmp.h5
+  $ T=/mnt/secondary-siv/references/Ecoli_K12_DH10B/
+  $ T=/mnt/secondary-siv/references/Ecoli_K12_DH10B/sequence/Ecoli_K12_DH10B.fasta
+  $ pbalign $DATDIR/test_pulseFile.fasta $T $O --pulseFile $DATDIR/test_pulseFile.fofn --forQuiver --algorithm gmap --byread 2>/dev/null
   $ echo $?
   0
 
-  $ OUTFILE=$OUTDIR/test_pulseFile.cmp.h5
-  $ REFPATH=/mnt/secondary-siv/references/Ecoli_K12_DH10B/
-  $ REFFILE=/mnt/secondary-siv/references/Ecoli_K12_DH10B/sequence/Ecoli_K12_DH10B.fasta
-  $ rm -f $OUTFILE
-  $ pbalign $DATDIR/test_pulseFile.fasta $REFPATH $OUTFILE --pulseFile $DATDIR/test_pulseFile.fofn --forQuiver --algorithm blasr --byread
+  $ O=$OUTDIR/test_pulseFile.cmp.h5
+  $ T=/mnt/secondary-siv/references/Ecoli_K12_DH10B/
+  $ T=/mnt/secondary-siv/references/Ecoli_K12_DH10B/sequence/Ecoli_K12_DH10B.fasta
+  $ rm -f $O
+  $ pbalign $DATDIR/test_pulseFile.fasta $T $O --pulseFile $DATDIR/test_pulseFile.fofn --forQuiver --algorithm blasr --byread 2>/dev/null
   $ echo $?
   0
 
 #Test pbalign with space in file names.
   $ FA=$DATDIR/dir\ with\ spaces/reads.fasta 
-  $ pbalign "$FA" "$FA" $OUTDIR/with_space.sam
+  $ pbalign "$FA" "$FA" $OUTDIR/with_space.sam 2>/dev/null
   $ echo $?
   0
 
@@ -267,7 +283,7 @@ $ tail -n+8 $SAMOUT  | cut -f 1-11 | sort | md5sum
   $ Q=$DATDIR/test_leftmost_query.fasta
   $ T=$DATDIR/test_leftmost_target.fasta
   $ O=$OUTDIR/test_leftmost_out.sam 
-  $ pbalign $Q $T $O --hitPolicy leftmost
+  $ pbalign $Q $T $O --hitPolicy leftmost 2>/dev/null
   $ echo $?
   0
   $ tail -n+6 $O | cut -f 4 
@@ -278,7 +294,7 @@ $ tail -n+8 $SAMOUT  | cut -f 1-11 | sort | md5sum
   $ T=/mnt/secondary-siv/references/lambda/sequence/lambda.fasta
   $ O=$OUTDIR/tiny_bam.bam
   $ rm -f $O
-  $ pbalign $Q $T $O
+  $ pbalign $Q $T $O 2>/dev/null
   $ echo $?
   0
 
@@ -287,7 +303,7 @@ $ tail -n+8 $SAMOUT  | cut -f 1-11 | sort | md5sum
   $ T=$DATDIR/reference_lambda.xml
   $ O=$OUTDIR/xml_in_bam_out.bam
   $ rm -f $O
-  $ pbalign $Q $T $O --algorithmOptions=" -holeNumbers 1-2000"
+  $ pbalign $Q $T $O --algorithmOptions=" -holeNumbers 1-2000" 2>/dev/null
   $ echo $?
   0
 
@@ -296,7 +312,7 @@ $ tail -n+8 $SAMOUT  | cut -f 1-11 | sort | md5sum
   $ T=$DATDIR/reference_lambda.xml
   $ O=$OUTDIR/xml_in_xml_out.xml
   $ rm -f $O
-  $ pbalign $Q $T $O --algorithmOptions=" -holeNumbers 1-2000"
+  $ pbalign $Q $T $O --algorithmOptions=" -holeNumbers 1-2000" 2>/dev/null
   $ echo $?
   0
 
