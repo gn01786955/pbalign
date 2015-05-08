@@ -30,8 +30,8 @@
 ###############################################################################
 
 """This script defines BamPostService, which
-   * calls 'samtools sort' to sort out.bam, and
-   * calls 'samtools index' to make out.bai index, and
+   * calls 'bamtools sort' to sort out.bam, and
+   * calls 'bamtools index' to make out.bai index, and
    * calls 'makePbi.py' to make out.pbi index file.
 """
 
@@ -53,7 +53,7 @@ class BamPostService(Service):
 
     @property
     def progName(self):
-        return "samtools"
+        return "bamtools"
 
     @property
     def cmd(self):
@@ -74,14 +74,14 @@ class BamPostService(Service):
 
     def _sortbam(self, inBamFile, sortedBamFile):
         """Sort inBamFile and output sortedBamFile."""
-        cmd = 'samtools sort {inBamFile} -f {sortedBamFile}'.format(
-            inBamFile=inBamFile, sortedBamFile=sortedBamFile)
+        cmd = 'bamtools sort -in {inBamFile} -out {sortedBamFile}'.format(
+                     inBamFile=inBamFile, sortedBamFile=sortedBamFile)
         Execute(self.name, cmd)
 
     def _makebai(self, sortedBamFile, outBaiFile):
         """Build *.bai index file."""
-        cmd = "samtools index {sortedBamFile} {outBaiFile}".format(
-            sortedBamFile=sortedBamFile, outBaiFile=outBaiFile)
+        cmd = "bamtools index -in {sortedBamFile}".format(
+            sortedBamFile=sortedBamFile)
         Execute(self.name, cmd)
 
     def _makepbi(self, sortedBamFile, refFasta):
