@@ -1,3 +1,4 @@
+//depot/software/smrtanalysis/bioinformatics/tools/pbalign/pbalign/bampostservice.py#1 - add change 148721 (xtext)
 #!/usr/bin/env python
 ###############################################################################
 # Copyright (c) 2011-2013, Pacific Biosciences of California, Inc.
@@ -30,8 +31,8 @@
 ###############################################################################
 
 """This script defines BamPostService, which
-   * calls 'bamtools sort' to sort out.bam, and
-   * calls 'bamtools index' to make out.bai index, and
+   * calls 'samtools sort' to sort out.bam, and
+   * calls 'samtools index' to make out.bai index, and
    * calls 'makePbi.py' to make out.pbi index file.
 """
 
@@ -53,7 +54,7 @@ class BamPostService(Service):
 
     @property
     def progName(self):
-        return "bamtools"
+        return "samtools"
 
     @property
     def cmd(self):
@@ -74,14 +75,14 @@ class BamPostService(Service):
 
     def _sortbam(self, inBamFile, sortedBamFile):
         """Sort inBamFile and output sortedBamFile."""
-        cmd = 'bamtools sort -in {inBamFile} -out {sortedBamFile}'.format(
-                     inBamFile=inBamFile, sortedBamFile=sortedBamFile)
+        cmd = 'samtools sort -m 4G {inBamFile} -f {sortedBamFile}'.format(
+            inBamFile=inBamFile, sortedBamFile=sortedBamFile)
         Execute(self.name, cmd)
 
     def _makebai(self, sortedBamFile, outBaiFile):
         """Build *.bai index file."""
-        cmd = "bamtools index -in {sortedBamFile}".format(
-            sortedBamFile=sortedBamFile)
+        cmd = "samtools index {sortedBamFile} {outBaiFile}".format(
+            sortedBamFile=sortedBamFile, outBaiFile=outBaiFile)
         Execute(self.name, cmd)
 
     def _makepbi(self, sortedBamFile, refFasta):
