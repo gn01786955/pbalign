@@ -1,4 +1,3 @@
-//depot/software/smrtanalysis/bioinformatics/tools/pbalign/pbalign/bampostservice.py#1 - add change 148721 (xtext)
 #!/usr/bin/env python
 ###############################################################################
 # Copyright (c) 2011-2013, Pacific Biosciences of California, Inc.
