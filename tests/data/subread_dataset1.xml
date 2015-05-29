@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <SubreadSet xmlns="http://pacificbiosciences.com/PacBioDataModel.xsd" MetaType="PacBio.DataSet.SubreadSet" Name="DataSet_SubreadSet" Tags="barcode moreTags mapping mytags" UniqueId="b095d0a3-94b8-4918-b3af-a3f81bbe519c" Version="2.3.0" CreatedAt="2015-01-27T09:00:01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pacificbiosciences.com/PacBioDataModel.xsd ../../../../../../../../common/datamodel/SequEl/EndToEnd/xsd/PacBioSecondaryDataModel.xsd">
-	<ExternalDataReferences>
-        <ExternalReference Name="First Subreads BAM" Description="Points to an example Subreads BAM file." MetaType="SubreadFile.SubreadBamFile" ResourceId="file:/mnt/secondary-siv/testdata/BlasrTestData/ctest/data/test_bam/m140905_042212_sidney_c100564852550000001823085912221377_s1_X0.subreads.bam" Tags="Example">
+	<ExternalResources>
+        <ExternalResource Name="First Subreads BAM" Description="Points to an example Subreads BAM file." MetaType="SubreadFile.SubreadBamFile" ResourceId="file:/mnt/secondary-siv/testdata/BlasrTestData/ctest/data/test_bam/m140905_042212_sidney_c100564852550000001823085912221377_s1_X0.subreads.bam" Tags="Example">
 			<PacBioMetadata ResourceId="file:/mnt/path/to/subreads0.metadata.xml"/>
-		</ExternalReference>
-        <ExternalReference Name="Second Subreads BAM" Description="Points to another example Subreads BAM file." MetaType="SubreadFile.SubreadBamFile" ResourceId="file:/mnt/secondary-siv/testdata/BlasrTestData/ctest/data/test_bam/m150325_224749_42269_c100795290850000001823159309091522_s1_p0.subreads.bam" Tags="Example">
+		</ExternalResource>
+        <ExternalResource Name="Second Subreads BAM" Description="Points to another example Subreads BAM file." MetaType="SubreadFile.SubreadBamFile" ResourceId="file:/mnt/secondary-siv/testdata/BlasrTestData/ctest/data/test_bam/m150325_224749_42269_c100795290850000001823159309091522_s1_p0.subreads.bam" Tags="Example">
 			<PacBioIndex ResourceId="file:/mnt/path/to/subreads1.pbi"/>
 			<PacBioMetadata ResourceId="file:/mnt/path/to/subreads1.metadata.xml"/>
-		</ExternalReference>
-	</ExternalDataReferences>
+		</ExternalResource>
+	</ExternalResources>
 	<Filters>
 		<Filter>
             <Parameters>
