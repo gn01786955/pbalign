@@ -181,9 +181,11 @@ class PBAlignRunner(PBToolRunner):
         output, errCode, errMsg = "", 0, ""
 
         outFormat = getFileFormat(outFile)
-        if outFormat == FILE_FORMATS.SAM or \
-           outFormat == FILE_FORMATS.BAM:
-            logging.info("OutputService: Genearte the output SAM/BAM file.")
+
+        if outFormat == FILE_FORMATS.BAM:
+            pass # Nothing to be done
+        if outFormat == FILE_FORMATS.SAM:
+            logging.info("OutputService: Genearte the output SAM file.")
             logging.debug("OutputService: Move {src} as {dst}".format(
                 src=inSam, dst=outFile))
             try:
@@ -205,17 +207,12 @@ class PBAlignRunner(PBToolRunner):
             logging.debug("OutputService: Call \"{0}\"".format(cmd))
             output, errCode, errMsg = backticks(cmd)
         elif outFormat == FILE_FORMATS.XML:
-            logging.info("OutputService: Generating the output XML file")
-            logging.debug("OutputService: Converting {samFile} to {outFile}.".
+            logging.info("OutputService: Generating the output XML file".
                          format(samFile=inSam, outFile=outFile))
             from pbdataset.DataSetIO import DataSet
-            try:
-                # Write bam to ${out}.bam and save file path to ${out}.xml
-                outBam = str(outFile[0:-3]) + "bam"
-                shutil.move(real_ppath(inSam), real_ppath(outBam))
-                DataSet(real_ppath(outBam)).write("xml:" + outFile)
-            except Exception as e:
-                output, errCode, errMsg = "", 1, str(e)
+            # Create {out}.xml, given {out}.bam
+            outBam = str(outFile[0:-3]) + "bam"
+            DataSet(real_ppath(outBam)).write("xml:" + outFile)
 
         if errCode != 0:
             errMsg = prog + " returned a non-zero exit status." + errMsg
@@ -271,6 +268,14 @@ class PBAlignRunner(PBToolRunner):
         except RuntimeError:
             return 1
 
+        # Sort bam before output
+        if outFormat in [FILE_FORMATS.BAM, FILE_FORMATS.XML]:
+            # Sort/make index for BAM output.
+            try:
+                BamPostService(self.fileNames).run()
+            except RuntimeError:
+                return 1
+
         # Output all hits in SAM, BAM or CMP.H5.
         try:
             useSmrtTitle = False
@@ -287,19 +292,12 @@ class PBAlignRunner(PBToolRunner):
         except RuntimeError:
             return 1
 
-        postService = None
+        # Load QVs to cmp.h5 for Quiver
         if outFormat == FILE_FORMATS.CMP and \
             self.args.forQuiver or self.args.loadQVs:
             # Call post service for quiver.
-            postService = ForQuiverService(self.fileNames,
-                                           self.args)
-        elif outFormat in [FILE_FORMATS.BAM, FILE_FORMATS.XML]:
-            # Sort/make index for BAM output.
-            postService = BamPostService(self.fileNames)
-
-        if postService is not None:
             try:
-                postService.run()
+                ForQuiverService(self.fileNames, self.args).run()
             except RuntimeError:
                 return 1
 

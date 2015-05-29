@@ -297,6 +297,9 @@ Test pbalign
   $ pbalign $Q $T $O 2>/dev/null
   $ echo $?
   0
+#Call samtools index to check whether out.bam is sorted or not
+  $ samtools index $O $TMP1.bai && ls $TMP1.bai >/dev/null && echo $?
+  0
 
 #Test pbalign with xml in bam out
   $ Q=$DATDIR/subread_dataset1.xml

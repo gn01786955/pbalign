@@ -61,21 +61,23 @@ class BamPostService(Service):
 
     def __init__(self, filenames):
         """Initialize a BamPostService object.
-            Input - inBamFile: a BAM file
+            Input - unsortedBamFile: a filtered, unsorted bam file
                     refFasta : a reference fasta file
             Output - sortedBamFile: sorted BAM file
                      outBaiFile: index BAI file
         """
-        self.inBamFile = filenames.outBamFileName  # either BAM or XML
         self.refFasta = filenames.targetFileName
-        self.sortedBamFile = filenames.sortedBamFileName
+
+        # filtered, unsorted bam file.
+        self.unsortedBamFile = filenames.filteredSam
+        self.outBamFile = filenames.outBamFileName
         self.outBaiFile = filenames.outBaiFileName
         self.outPbiFile = filenames.outPbiFileName
 
-    def _sortbam(self, inBamFile, sortedBamFile):
-        """Sort inBamFile and output sortedBamFile."""
-        cmd = 'samtools sort -m 4G {inBamFile} -f {sortedBamFile}'.format(
-            inBamFile=inBamFile, sortedBamFile=sortedBamFile)
+    def _sortbam(self, unsortedBamFile, sortedBamFile):
+        """Sort unsortedBamFile and output sortedBamFile."""
+        cmd = 'samtools sort -m 4G {unsortedBamFile} -f {sortedBamFile}'.format(
+            unsortedBamFile=unsortedBamFile, sortedBamFile=sortedBamFile)
         Execute(self.name, cmd)
 
     def _makebai(self, sortedBamFile, outBaiFile):
@@ -91,7 +93,7 @@ class BamPostService(Service):
         refFai = refFasta + ".fai"
         if not isExist(refFai):
             cmd = "samtools faidx {fa}".format(fa=refFasta)
-            output, errCode, errMsg = backticks(cmd)
+            _output, errCode, _errMsg = backticks(cmd)
             if errCode != 0:  # If fail to build refFasta.fai
                 logging.warning("samtools faidx failed to create {fai}.".
                                 format(fai=refFai))
@@ -103,10 +105,13 @@ class BamPostService(Service):
 
     def run(self):
         """ Run the BAM post-processing service. """
-        logging.info(self.name + ": sort and build index for a bam file.")
-        self._sortbam(self.inBamFile, self.sortedBamFile)
-        self._makebai(self.sortedBamFile, self.outBaiFile)
+        logging.info(self.name + ": Sort and build index for a bam file.")
+        self._sortbam(unsortedBamFile=self.unsortedBamFile,
+                      sortedBamFile=self.outBamFile)
+        self._makebai(sortedBamFile=self.outBamFile,
+                      outBaiFile=self.outBaiFile)
 
         # TODO: enable _makepbi after 'makePbi.py' is moved out of
         # GenomicConsensus.
-        #self._makepbi(self.sortedBamFile, self.refFasta)
+        #self._makepbi(sortedBamFile=self.sortedBamFile,
+        #              refFasta=self.refFasta)

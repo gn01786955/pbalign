@@ -84,8 +84,7 @@ class PBAlignFiles:
         self.alignerSamOut = None   # The sam/bam output file by an aligner
         self.filteredSam = None     # The filtered sam/bam file.
 
-        self.outBamFileName = None     # filtered bam, not sorted
-        self.sortedBamFileName = None  # sorted bam output
+        self.outBamFileName = None     # filtered, sorted bam
         self.outBaiFileName = None     # output *.bai bam index
         self.outPbiFileName = None     # output *.pbi pacbio bam index
 
@@ -139,8 +138,8 @@ class PBAlignFiles:
 
     def SetOutputFileName(self, outputFileName):
         """Validate the user-specified output file and get the absolute and
-        expanded path. If output file format is XML or BAM, set sorted BAM
-        file name, BAM index bai file and PacBio BAM index pbi file.
+        expanded path. If output file format is XML or BAM, set output BAM
+        filename, BAM index bai file and PacBio BAM index pbi file.
         """
         if outputFileName is not None and outputFileName != "":
             self.outputFileName = checkOutputFile(outputFileName)
@@ -148,9 +147,8 @@ class PBAlignFiles:
                     FILE_FORMATS.XML]:
                 prefix = str(self.outputFileName[0:-3])
                 self.outBamFileName = prefix + "bam"
-                self.sortedBamFileName = prefix + "sorted.bam"
-                self.outBaiFileName = self.sortedBamFileName + ".bai"
-                self.outPbiFileName = self.sortedBamFileName + ".pbi"
+                self.outBaiFileName = self.outBamFileName + ".bai"
+                self.outPbiFileName = self.outBamFileName + ".pbi"
 
     def SetRegionTable(self, regionTable):
         """Validate the user-specified region table and get the absolute and
@@ -194,8 +192,6 @@ class PBAlignFiles:
                 t=self.adapterGffFileName)
         if self.outBamFileName is not None:
             desc += "Out bam file: {b}\n".format(b=self.outBamFileName)
-        if self.sortedBamFileName is not None:
-            desc += "Sorted bam file: {b}\n".format(b=self.sortedBamFileName)
         if self.outBaiFileName is not None:
             desc += "Bam index file: {b}\n".format(b=self.outBaiFileName)
         if self.outPbiFileName is not None:
