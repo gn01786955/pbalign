@@ -76,8 +76,12 @@ class BamPostService(Service):
 
     def _sortbam(self, unsortedBamFile, sortedBamFile):
         """Sort unsortedBamFile and output sortedBamFile."""
-        cmd = 'samtools sort -m 4G {unsortedBamFile} -f {sortedBamFile}'.format(
-            unsortedBamFile=unsortedBamFile, sortedBamFile=sortedBamFile)
+        if not sortedBamFile.endswith(".bam"):
+            raise ValueError("sorted bam file name %s must end with .bam" %
+                             sortedBamFile)
+        sortedPrefix = sortedBamFile[0:-4]
+        cmd = 'samtools sort -m 4G {unsortedBamFile} {prefix}'.format(
+            unsortedBamFile=unsortedBamFile, prefix=sortedPrefix)
         Execute(self.name, cmd)
 
     def _makebai(self, sortedBamFile, outBaiFile):
