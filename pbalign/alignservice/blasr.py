@@ -241,9 +241,25 @@ class BlasrService(AlignService):
         if options.nproc is not None and options.nproc != "":
             cmdStr += " -nproc {0} ".format(options.nproc)
 
+        # Specify filter criteira and hit policy.
         if options.minLength is not None:
-            cmdStr += " -minSubreadLength {n} -minReadLength {n} ".\
+            cmdStr += " -minSubreadLength {n} -minAlnLength {n} ".\
                     format(n=options.minLength)
+
+        if options.maxDivergence is not None:
+            maxDivergence = int(options.maxDivergence if options.maxDivergence
+                                > 1.0 else (options.maxDivergence * 100))
+            cmdStr += " -minPctSimilarity {0}".format(100 - maxDivergence)
+
+        if options.minAccuracy is not None:
+            minAccuracy = int(options.minAccuracy if options.minAccuracy > 1.0
+                              else (options.minAccuracy * 100))
+            cmdStr += " -minPctAccuracy {0}".format(minAccuracy)
+
+        if options.scoreCutoff is not None:
+            cmdStr += " -maxScore {0}".format(options.scoreCutoff)
+
+        cmdStr += " -hitPolicy {0} ".format(options.hitPolicy)
 
         if options.noSplitSubreads:
             cmdStr += " -noSplitSubreads "
@@ -254,8 +270,8 @@ class BlasrService(AlignService):
         if options.seed is not None and options.seed != 0:
             cmdStr += " -randomSeed {0} ".format(options.seed)
 
-        if options.hitPolicy == "randombest":
-            cmdStr += " -placeRepeatsRandomly "
+        #if options.hitPolicy == "randombest":
+        #    cmdStr += " -placeRepeatsRandomly "
 
         if options.useccs is not None and options.useccs != "":
             cmdStr += " -{0} ".format(options.useccs)

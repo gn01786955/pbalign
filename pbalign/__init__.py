@@ -34,7 +34,7 @@
 
 from __future__ import absolute_import
 
-_changelist = "$Change: 151476 $"
+_changelist = "$Change: 152502 $"
 
 
 def _get_changelist(perforce_str):

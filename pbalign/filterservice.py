@@ -53,7 +53,7 @@ class FilterService(Service):
         return "samFilter"
 
     def __init__(self, inSamFile, refFile, outSamFile,
-                 alnServiceName, scoreSign, options,
+                 alignerName, scoreSign, options,
                  adapterGffFile=None):
         """Initialize a FilterService object.
             Input:
@@ -68,7 +68,7 @@ class FilterService(Service):
         self.inSamFile = inSamFile # sam|bam
         self.refFile = refFile
         self.outSamFile = outSamFile # sam|bam
-        self.alnServiceName = alnServiceName
+        self.alignerName = alignerName
         self.scoreSign = scoreSign
         self.options = options
         self.adapterGffFile = adapterGffFile
@@ -77,29 +77,33 @@ class FilterService(Service):
     def cmd(self):
         """String of a command-line to execute."""
         return self._toCmd(self.inSamFile,  self.refFile,
-                           self.outSamFile, self.alnServiceName,
+                           self.outSamFile, self.alignerName,
                            self.scoreSign,  self.options,
                            self.adapterGffFile)
 
     def _toCmd(self, inSamFile, refFile, outSamFile,
-            alnServiceName, scoreSign, options, adapterGffFile):
+            alignerName, scoreSign, options, adapterGffFile):
         """ Generate a samFilter command line from options.
             Input:
                 inSamFile : the input SAM file
                 refFile   : the reference FASTA file
                 outSamFile: the output SAM file
-                alnServiceName: aligner service name
+                alignerName: aligner service name
                 scoreSign : score sign, can be -1 or 1
                 options   : argument options
             Output:
                 a command-line string
         """
-        if getFileFormat(inSamFile) == FILE_FORMATS.BAM:
-            # TODO: use bamFilter instead
-            return "cp {inFile} {outFile}".format(inFile=inSamFile,
-                    outFile=outSamFile)
+        # blasr supports in-line alignment filteration,
+        # no need to call samFilter at all.
+        if alignerName == "blasr" and \
+            not self.options.filterAdapterOnly:
+            cmdStr = "rm -f {outFile} && ln -s {inFile} {outFile}".format(
+                    inFile=inSamFile, outFile=outSamFile)
+            logging.info(cmdStr)
+            return cmdStr
 
-        # else samfilter
+        # if aligner is not blasr, call samFilter instead
         cmdStr = self.progName + \
             " {inSamFile} {refFile} {outSamFile} ".format(
                 inSamFile=inSamFile,
@@ -126,7 +130,7 @@ class FilterService(Service):
             cmdStr += " -scoreSign {0}".format(scoreSign)
         else:
             logging.error("{0}'s score sign is neither 1 nor -1.".format(
-                alnServiceName))
+                alignerName))
 
         if options.scoreCutoff is not None:
             cmdStr += " -scoreCutoff {0}".format(options.scoreCutoff)

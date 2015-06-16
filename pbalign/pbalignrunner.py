@@ -155,10 +155,13 @@ class PBAlignRunner(PBToolRunner):
                 logging.error(errMsg)
                 raise ValueError(errMsg)
 
-        if (outFormat == FILE_FORMATS.BAM or outFormat == FILE_FORMATS.XML) \
-            and args.algorithm != "blasr":
-            errMsg = "Must choose blasr in order to output a bam file."
-            raise ValueError(errMsg)
+        if outFormat == FILE_FORMATS.BAM or outFormat == FILE_FORMATS.XML:
+            if args.algorithm != "blasr":
+                errMsg = "Must choose blasr in order to output a bam file."
+                raise ValueError(errMsg)
+            if args.filterAdapterOnly:
+                errMsg = "-filterAdapter does not work when out format is BAM."
+                raise ValueError(errMsg)
 
     def _parseArgs(self):
         """Overwrite ToolRunner.parseArgs(self).
@@ -259,7 +262,8 @@ class PBAlignRunner(PBToolRunner):
         self._filterService = FilterService(self.fileNames.alignerSamOut,
                                             self.fileNames.targetFileName,
                                             self.fileNames.filteredSam,
-                                            self._alnService.name,
+                                            self.args.algorithm,
+                                            #self._alnService.name,
                                             self._alnService.scoreSign,
                                             self.args,
                                             self.fileNames.adapterGffFileName)
