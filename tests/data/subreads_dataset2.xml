@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<SubreadSet xmlns:uuid="java:java.util.UUID" xmlns:bax="http://whatever" xmlns="http://pacificbiosciences.com/PacBioDataModel.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fn="http://www.w3.org/2005/xpath-functions" Name="Subreads from run&#10;                r002014_42139_140912" MetaType="PacBio.DataSet.SubreadSet" Tags="pacbio.secondary.instrument=RS" Version="0.5" UniqueId="a1bc5569-4eeb-4a86-8b6b-900c667eebab">
+	<ExternalDataReferences>
+		<ExternalReference MetaType="SubreadFile.SubreadBamFile" ResourceId="file:///home/UNIXHOME/secondarytest/m140913_005018_42139_c100713652400000001823152404301534_s1_p0.subreads.bam" />
+	</ExternalDataReferences>
+	<DataSetMetadata>
+		<TotalLength>50000000</TotalLength>
+		<NumRecords>150000</NumRecords>
+		<Collections>
+			<CollectionMetadata Context="m140913_005018_42139_c100713652400000001823152404301534_s1_p0" InstrumentName="42139" InstrumentId="1">
+				<InstCtrlVer>2.3.0.0.140018</InstCtrlVer>
+				<SigProcVer>NRT@172.31.128.10:8082, SwVer=2300.140018, HwVer=1.0</SigProcVer>
+				<RunDetails>
+					<RunId>r002014_42139_140912</RunId>
+					<Name>42139_NITRO_VALIDATION_P5C3_20kSSecoliAndStap</Name>
+				</RunDetails>
+				<WellSample Name="20kbSS_ecoli_P5C3_25pM_highSNR">
+					<PlateId>42139_NITRO_VALIDATION_P5C3_20kSSecoliAndStaph</PlateId>
+					<WellName>20kbSS_ecoli_P5C3_25pM_highSNR</WellName>
+					<Concentration>0</Concentration>
+					<SampleReuseEnabled>false</SampleReuseEnabled>
+					<StageHotstartEnabled>true</StageHotstartEnabled>
+					<SizeSelectionEnabled>
+                                false
+                            </SizeSelectionEnabled>
+					<UseCount>1</UseCount>
+					<Comments>20kbSSecoli_P5C3_25pM_highSNR</Comments>
+					<BioSampleReferences>
+						<BioSampleReference>86088e1d-c45c-48c9-bdde-7add2b73cbc1</BioSampleReference>
+					</BioSampleReferences>
+				</WellSample>
+				<AutomationName>MagBead OneCellPerWell v1</AutomationName>
+				<CollectionNumber>1</CollectionNumber>
+				<CellIndex>4</CellIndex>
+				<CellPac Barcode="10071365240000000182315240430153" />
+				<Primary>
+					<AutomationName>BasecallerV1</AutomationName>
+					<ConfigFileName>2-1-0_P5-C3.xml</ConfigFileName>
+					<SequencingCondition />
+					<ResultsFolder>Analysis_Results</ResultsFolder>
+					<CollectionPathUri>rsy://mp-rsync/vol54//RS_DATA_STAGING/42139/42139_NITRO_VALIDATION_P5C3_20kSSecoliAndStaph_2014/A07_1/</CollectionPathUri>
+					<CopyFiles>
+						<CollectionFileCopy>Fasta</CollectionFileCopy>
+					</CopyFiles>
+				</Primary>
+			</CollectionMetadata>
+		</Collections>
+		<BioSamples>
+			<BioSample Name="20kbSS_ecoli_P5C3_25pM_highSNR" Description="20kbSSecoli_P5C3_25pM_highSNR" UniqueId="86088e1d-c45c-48c9-bdde-7add2b73cbc1" />
+		</BioSamples>
+	</DataSetMetadata>
+</SubreadSet>

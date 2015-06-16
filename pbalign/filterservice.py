@@ -100,7 +100,6 @@ class FilterService(Service):
             not self.options.filterAdapterOnly:
             cmdStr = "rm -f {outFile} && ln -s {inFile} {outFile}".format(
                     inFile=inSamFile, outFile=outSamFile)
-            logging.info(cmdStr)
             return cmdStr
 
         # if aligner is not blasr, call samFilter instead
