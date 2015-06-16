@@ -65,16 +65,9 @@ class Test_fileutil(unittest.TestCase):
         self.assertTrue(filecmp.cmp(fofnFN, checkInputFile(fofnFN)))
 
         xmlFN = path.join(self.rootDir,  "data/subread_dataset1.xml")
-        self.assertIsNone(xmlFN)
-        self.assertIsNotNone(xmlFN)
-
         ret = checkInputFile(xmlFN)
         self.assertTrue(ret.endswith('.fofn'))
-        self.assertIsNone(ret)
         fs = [l.strip() for l in open(ret, 'r')]
-        self.assertIsNone(fs)
-        self.assertIsNotNone(fs)
-
         self.assertTrue(fs[0].endswith("m140905_042212_sidney_c100564852550000001823085912221377_s1_X0.subreads.bam"))
         self.assertTrue(fs[1].endswith("m150325_224749_42269_c100795290850000001823159309091522_s1_p0.subreads.bam"))
 
