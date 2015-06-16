@@ -186,12 +186,7 @@ def XmlToFofn(xmlfile, fofnfile):
     """
     Extract datasets in xml file to a fofn.
     """
-    d = DataSet(xmlfile)
-    fs = [f[5:] for f in d.toFofn() if f.startswith('file:')]
-    with open(fofnfile, 'w') as writer:
-        for f in fs:
-            writer.write(f + "\n")
-
+    DataSet(xmlfile).toFofn(outfn=fofnfile, uri=False)
 
 def checkInputFile(filename, validFormats=VALID_INPUT_FORMATS):
     """

@@ -5,7 +5,7 @@ from os import path
 from pbalign.utils.fileutil import getFileFormat, \
     isValidInputFormat, isValidOutputFormat, getFilesFromFOFN, \
     checkInputFile, checkOutputFile, checkReferencePath, \
-    real_upath, real_ppath, isExist
+    real_upath, real_ppath, isExist, XmlToFofn
 import filecmp
 from test_setpath import ROOT_DIR, OUT_DIR, DATA_DIR
 
@@ -53,6 +53,20 @@ class Test_fileutil(unittest.TestCase):
                "m121215_065521_richard_c100425710150000001823055001121371_s2_p0.pls.h5"]
         self.assertEqual(fns, getFilesFromFOFN(fofnFN))
 
+    def test_XmlToFofn(self):
+        """Test XmlToFofn."""
+        xmlFN = path.join(self.rootDir,  "data/subreads_dataset1.xml")
+        fofnFN = path.join(self.rootDir, "out/subreads_dataset1.fofn")
+        stdfofnFN = "/mnt/secondary-siv/testdata/pbalign-unittest/stdout/subreads_dataset1.fofn"
+        XmlToFofn(xmlFN, fofnFN)
+        self.assertTrue(filecmp.cmp(fofnFN, stdfofnFN))
+
+        xmlFN = path.join(self.rootDir,  "data/subreads_dataset2.xml")
+        fofnFN = path.join(self.rootDir, "out/subreads_dataset2.fofn")
+        stdfofnFN = "/mnt/secondary-siv/testdata/pbalign-unittest/stdout/subreads_dataset2.fofn"
+        XmlToFofn(xmlFN, fofnFN)
+        self.assertTrue(filecmp.cmp(fofnFN, stdfofnFN))
+
     def test_checkInputFile(self):
         """Test checkInputFile()."""
         fastaFN = path.join(self.rootDir,  "data/ecoli.fasta")
@@ -64,13 +78,12 @@ class Test_fileutil(unittest.TestCase):
         fofnFN = path.join(self.rootDir,  "data/ecoli_lp.fofn")
         self.assertTrue(filecmp.cmp(fofnFN, checkInputFile(fofnFN)))
 
-        xmlFN = path.join(self.rootDir,  "data/subread_dataset1.xml")
+        xmlFN = path.join(self.rootDir,  "data/subreads_dataset1.xml")
         ret = checkInputFile(xmlFN)
         self.assertTrue(ret.endswith('.fofn'))
         fs = [l.strip() for l in open(ret, 'r')]
         self.assertTrue(fs[0].endswith("m140905_042212_sidney_c100564852550000001823085912221377_s1_X0.subreads.bam"))
         self.assertTrue(fs[1].endswith("m150325_224749_42269_c100795290850000001823159309091522_s1_p0.subreads.bam"))
-
 
     def test_checkOutputFile(self):
         """Test checkOutputFile()."""
