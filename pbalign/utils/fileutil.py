@@ -39,7 +39,7 @@ import os.path as op
 import logging
 from xml.etree import ElementTree as ET
 from pbcore.util.Process import backticks
-from pbdataset.DataSetIO import DataSet
+from pbcore.io import DataSet
 
 
 def enum(**enums):

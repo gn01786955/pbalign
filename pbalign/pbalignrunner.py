@@ -212,7 +212,7 @@ class PBAlignRunner(PBToolRunner):
         elif outFormat == FILE_FORMATS.XML:
             logging.info("OutputService: Generating the output XML file".
                          format(samFile=inSam, outFile=outFile))
-            from pbdataset.DataSetIO import DataSet
+            from pbcore.io import DataSet
             # Create {out}.xml, given {out}.bam
             outBam = str(outFile[0:-3]) + "bam"
             DataSet(real_ppath(outBam)).write("xml:" + outFile)
