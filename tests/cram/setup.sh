@@ -12,8 +12,11 @@ SIVDIR=/mnt/secondary-siv/testdata/pbalign-unittest
 DATSIVDIR=$SIVDIR/data/
 STDSIVDIR=$SIVDIR/stdout/
 
+TESTDATASETS=/mnt/secondary-siv/testdata/SA3-RS
+REFDIR=/mnt/secondary-siv/references
+
 TMP1=$$.tmp.out
 TMP2=$$.tmp.stdout
 SAMTOM4=samtom4
-CMPH5TOOLS="/mnt/secondary/Smrtpipe/builds/Internal_Mainline_Nightly_LastSuccessfulBuild/smrtcmds/bin/smrtwrap cmph5tools.py "
+CMPH5TOOLS="/mnt/secondary/Smrtanalysis/smrtcmds/bin/smrtwrap cmph5tools.py "
 

@@ -39,8 +39,8 @@ Set up
 
   $ rm -f $BAS_CMPOUT
   $ pbalign $Q $T $BAS_CMPOUT --useccs=useccsdenovo 2>/dev/null
-  $ /mnt/secondary/Smrtpipe/builds/Internal_Mainline_Nightly_LastSuccessfulBuild/smrtcmds/bin/smrtwrap cmph5tools.py sort $BAS_CMPOUT --deep --inPlace
-  $ /mnt/secondary/Smrtpipe/builds/Internal_Mainline_Nightly_LastSuccessfulBuild/smrtcmds/bin/smrtwrap cmph5tools.py sort $CCS_CMPOUT --deep --inPlace
+  $ /mnt/secondary/Smrtanalysis/smrtcmds/bin/smrtwrap cmph5tools.py sort $BAS_CMPOUT --deep --inPlace
+  $ /mnt/secondary/Smrtanalysis/smrtcmds/bin/smrtwrap cmph5tools.py sort $CCS_CMPOUT --deep --inPlace
 
   $ h5diff $CCS_CMPOUT $BAS_CMPOUT /AlnGroup  /AlnGroup
   $ h5diff $CCS_CMPOUT $BAS_CMPOUT /AlnInfo   /AlnInfo
