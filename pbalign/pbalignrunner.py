@@ -212,10 +212,10 @@ class PBAlignRunner(PBToolRunner):
         elif outFormat == FILE_FORMATS.XML:
             logging.info("OutputService: Generating the output XML file".
                          format(samFile=inSam, outFile=outFile))
-            from pbcore.io import DataSet
+            from pbcore.io import AlignmentSet
             # Create {out}.xml, given {out}.bam
             outBam = str(outFile[0:-3]) + "bam"
-            DataSet(real_ppath(outBam)).write("xml:" + outFile)
+            AlignmentSet(real_ppath(outBam)).write(outFile)
 
         if errCode != 0:
             errMsg = prog + " returned a non-zero exit status." + errMsg

@@ -39,7 +39,7 @@ import os.path as op
 import logging
 from xml.etree import ElementTree as ET
 from pbcore.util.Process import backticks
-from pbcore.io import DataSet
+from pbcore.io import DataSet, ReferenceSet
 
 
 def enum(**enums):
@@ -372,7 +372,7 @@ def checkReferencePath(inRefpath):
         refinfoxml = op.join(op.split(op.dirname(refpath))[0],
                              "reference.info.xml")
     elif getFileFormat(refpath) == FILE_FORMATS.XML:
-        fastaFiles = DataSet(refpath).toFofn()
+        fastaFiles = ReferenceSet(refpath).toFofn()
         if len(fastaFiles) != 1:
             errMsg = refpath + " must contain exactly one reference"
             logging.error(errMsg)
