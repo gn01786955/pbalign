@@ -90,22 +90,10 @@ class BamPostService(Service):
             sortedBamFile=sortedBamFile, outBaiFile=outBaiFile)
         Execute(self.name, cmd)
 
-    def _makepbi(self, sortedBamFile, refFasta):
+    def _makepbi(self, sortedBamFile):
         """Generate *.pbi PacBio BAM index."""
-        from pbalign.utils.fileutil import isExist
-        from pbcore.util.Process import backticks
-        refFai = refFasta + ".fai"
-        if not isExist(refFai):
-            cmd = "samtools faidx {fa}".format(fa=refFasta)
-            _output, errCode, _errMsg = backticks(cmd)
-            if errCode != 0:  # If fail to build refFasta.fai
-                logging.warning("samtools faidx failed to create {fai}.".
-                                format(fai=refFai))
-
-        if isExist(refFai):
-            cmd = "makePbi.py --referenceFasta {refFasta} {sortedBamFile}".\
-                  format(refFasta=refFasta, sortedBamFile=sortedBamFile)
-            Execute(self.name, cmd)
+        cmd = "pbindex %s" % sortedBamFile
+        Execute(self.name, cmd)
 
     def run(self):
         """ Run the BAM post-processing service. """
@@ -114,8 +102,4 @@ class BamPostService(Service):
                       sortedBamFile=self.outBamFile)
         self._makebai(sortedBamFile=self.outBamFile,
                       outBaiFile=self.outBaiFile)
-
-        # TODO: enable _makepbi after 'makePbi.py' is moved out of
-        # GenomicConsensus.
-        #self._makepbi(sortedBamFile=self.sortedBamFile,
-        #              refFasta=self.refFasta)
+        self._makepbi(sortedBamFile=self.outBamFile)

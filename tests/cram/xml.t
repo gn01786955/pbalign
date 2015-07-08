@@ -19,6 +19,14 @@ Set up
   $ echo $?
   0
 
+  $ ls $OUTDIR/xml_in_xml_out.bam.bai && echo $? # bam index exists
+  *.bai (glob)
+  0
+
+  $ ls $OUTDIR/xml_in_xml_out.bam.pbi && echo $? # pbi index exists
+  *.pbi (glob)
+  0
+
 #Test pbalign with up-to-dated xml inputs
   $ Q=$DATDIR/subreads_dataset2.xml
   $ T=$DATSIVDIR/ecoli.fasta
