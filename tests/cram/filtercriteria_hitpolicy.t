@@ -64,14 +64,6 @@ Set up
   $ pbalign --hitPolicy allbest $Q $T $SAMOUT 2>/dev/null
 
 
-#Test pbalign with -filterAdapterOnly
-  $ Q=$DATDIR/test_filterAdapterOnly.fofn
-  $ T=/mnt/secondary-siv/testdata/pbalign-unittest/data/references/H1_6_Scal_6x/
-  $ O=$OUTDIR/test_filterAdapterOnly.sam
-  $ rm -f $O
-  $ pbalign $Q $T $O --filterAdapterOnly --algorithmOptions=" -holeNumbers 10817,14760" --seed=1 2>/dev/null
-  $ grep -v '@' $O | cut -f 1-4
-
 
 #Test pbalign with -hitPolicy leftmost
   $ Q=$DATDIR/test_leftmost_query.fasta

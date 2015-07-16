@@ -23,6 +23,12 @@ test:
 	@echo pbalign cram tests require blasr installed.
 	find tests/cram -name "*.t" | xargs cram 
 
+h5test:
+	# Tests for pre-3.0 smrtanalysis when default file formats are *.h5
+	@echo pbalign h5 tests require blasr, samtoh5, loadPulses, samFilter and etc installed.
+	nosetests --verbose tests/unit_h5/*.py
+	find tests/cram_h5 -name "*.t" | xargs cram -v
+
 doc:
 	sphinx-apidoc -T -f -o doc src/ && cd doc && make html
 
