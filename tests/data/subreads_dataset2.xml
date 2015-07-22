@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <SubreadSet CreatedAt="2015-07-16T11:39:29" MetaType="PacBio.DataSet.SubreadSet" Name="" Tags="" UniqueId="a263117b-9f93-6ae5-9c11-7ac144df4ae5" Version="2.3.0" xmlns="http://pacificbiosciences.com/PacBioDataModel.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pacificbiosciences.com/PacBioDataModel.xsd">
 	<ExternalResources>
-		<ExternalResource MetaType="PacBio.SubreadFile.SubreadBamFile" ResourceId="/home/UNIXHOME/secondarytest/m140913_005018_42139_c100713652400000001823152404301534_s1_p0.subreads.bam"/>
+		<ExternalResource MetaType="PacBio.SubreadFile.SubreadBamFile" ResourceId="/mnt/secondary-siv/testdata/pbalign-unittest/data/m140913_005018_42139_c100713652400000001823152404301534_s1_p0.subreads.bam"/>
 	</ExternalResources>
 	<DataSetMetadata>
 		<NumRecords>-1</NumRecords>
