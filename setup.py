@@ -14,6 +14,7 @@ setup(
     zip_safe = False,
     install_requires=[
         'pbcore >= 0.8.5',
+        'pbcommand >= 0.1.12',
         'pysam',
         ],
     entry_points={'console_scripts': [
