@@ -45,8 +45,15 @@ import time
 import sys
 import shutil
 
+from pbcommand.cli import pacbio_args_or_contract_runner
+from pbcommand.utils import setup_log
+from pbcore.util.Process import backticks
+from pbcore.util.ToolRunner import PBToolRunner
+
+
 from pbalign.__init__ import get_version
-from pbalign.options import parseOptions, ALGORITHM_CANDIDATES
+from pbalign.options import (ALGORITHM_CANDIDATES, get_argument_parser,
+    resolved_tool_contract_to_args)
 from pbalign.alignservice.blasr import BlasrService
 from pbalign.alignservice.bowtie import BowtieService
 from pbalign.alignservice.gmap import GMAPService
@@ -56,35 +63,38 @@ from pbalign.pbalignfiles import PBAlignFiles
 from pbalign.filterservice import FilterService
 from pbalign.forquiverservice.forquiver import ForQuiverService
 from pbalign.bampostservice import BamPostService
-from pbcore.util.Process import backticks
-from pbcore.util.ToolRunner import PBToolRunner
-
 
 class PBAlignRunner(PBToolRunner):
 
     """Tool runner."""
 
-    def __init__(self, argumentList):
+    def __init__(self, args=None, argumentList=()):
         """Initialize a PBAlignRunner object.
            argumentList is a list of arguments, such as:
            ['--debug', '--maxHits', '10', 'in.fasta', 'ref.fasta', 'out.sam']
         """
         desc = "Utilities for aligning PacBio reads to reference sequences."
+        if args is None: # FIXME unit testing hack
+            args = get_argument_parser().parse_args(argumentList)
+        self.args = args
+        # args.verbosity is computed by counting # of 'v's in '-vv...'.
+        # However in parseOptions, arguments are parsed twice to import config
+        # options and then overwrite them with argumentList (e.g. command-line)
+        # options.
+        #self.args.verbosity = 1 if (self.args.verbosity is None) else \
+        #    (int(self.args.verbosity) / 2 + 1)
+        self.args.verbosity = 2 if self.args.verbose else 1
         super(PBAlignRunner, self).__init__(desc)
-        self._argumentList = argumentList
         self._alnService = None
         self._filterService = None
         self.fileNames = PBAlignFiles()
         self._tempFileManager = TempFileManager()
 
-        self.parser, self.args, _infoMsg = parseOptions(
-            argumentList=self._argumentList, parser=self.parser)
-        # args.verbosity is computed by counting # of 'v's in '-vv...'.
-        # However in parseOptions, arguments are parsed twice to import config
-        # options and then overwrite them with argumentList (e.g. command-line)
-        # options.
-        self.args.verbosity = 1 if (self.args.verbosity is None) else \
-            (int(self.args.verbosity) / 2 + 1)
+    def _setupParsers(self, description):
+        pass
+
+    def _addStandardArguments(self):
+        pass
 
     def getVersion(self):
         """Return version."""
@@ -234,7 +244,8 @@ class PBAlignRunner(PBToolRunner):
         """
         startTime = time.time()
         logging.info("pbalign version: {version}".format(version=get_version()))
-        logging.debug("Original arguments: " + str(self._argumentList))
+        # FIXME
+        #logging.debug("Original arguments: " + str(self._argumentList))
 
         # Create an AlignService by algorithm name.
         self._alnService = self._createAlignService(self.args.algorithm,
@@ -313,15 +324,25 @@ class PBAlignRunner(PBToolRunner):
         logging.info("Total time: {:.2f} s.".format(float(endTime - startTime)))
         return 0
 
-
-def main():
-    """Main entry."""
-    pbobj = PBAlignRunner(sys.argv[1:])
-    return pbobj.start()
-
-
-if __name__ == "__main__":
-    # For testing PBAlignRunner.
+def args_runner(args):
     # PBAlignRunner inherits PBToolRunner. So PBAlignRunner.start() parses args,
     # sets up logging and finally returns run().
+    return PBAlignRunner(args).start()
+
+def resolved_tool_contract_runner(resolved_tool_contract):
+    args = resolved_tool_contract_to_args(resolved_tool_contract)
+    return args_runner(args)
+
+def main(argv=sys.argv):
+    logging.basicConfig(level=logging.INFO)
+    log = logging.getLogger()
+    mp = get_argument_parser()
+    return pacbio_args_or_contract_runner(argv[1:],
+                                          mp,
+                                          args_runner,
+                                          resolved_tool_contract_runner,
+                                          log,
+                                          lambda *args: log)
+
+if __name__ == "__main__":
     sys.exit(main())

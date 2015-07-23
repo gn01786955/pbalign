@@ -34,7 +34,27 @@
 
 from __future__ import absolute_import
 import argparse
+import logging
 from copy import copy
+import json
+import sys
+
+from pbcommand.models import TaskTypes, FileTypes, get_default_contract_parser
+from pbcommand.common_options import add_resolved_tool_contract_option, \
+    add_debug_option
+
+
+class Constants(object):
+    TOOL_ID = "pbalign.tasks.pbalign"
+    ALGORITHM_OPTIONS_ID = "pbalign.task_options.algorithm_options"
+    DRIVER_EXE = "pbalign --resolved-tool-contract "
+    VERSION = "3.0"
+    PARSER_DESC = """\
+Mapping PacBio sequences to references using an algorithm selected from a
+selection of supported command-line alignment algorithms. Input can be a
+fasta, pls.h5, bas.h5 or ccs.h5 file or a fofn (file of file names). Output
+can be in CMP.H5, SAM or BAM format. If output is BAM format, aligner can
+only be blasr and QVs will be loaded automatically."""
 
 # The first candidate 'blasr' is the default.
 ALGORITHM_CANDIDATES = ('blasr', 'bowtie', 'gmap')
@@ -80,27 +100,11 @@ DEFAULT_OPTIONS = {"regionTable": None,
                    "seed": 1,
                    "tmpDir": "/scratch"}
 
-
-def constructOptionParser(parser=None):
-    """Constrct and return an argument parser.
-
-    If a parser is specified, use it. Otherwise, create a parser instead.
-    Add PBAlignRunner arguments to construct the parser, and finally
-    return it.
-
+def constructOptionParser(parser):
     """
-    desc = "Mapping PacBio sequences to references using an algorithm \n"
-    desc += "selected from a selection of supported command-line alignment\n"
-    desc += "algorithms. Input can be a fasta, pls.h5, bas.h5 or ccs.h5\n"
-    desc += "file or a fofn (file of file names). Output can be in \n"
-    desc += "CMP.H5, SAM or BAM format. If output is BAM format, aligner\n"
-    desc += "can only be blasr and QVs will be loaded automatically."
-
-    if (parser is None):
-        parser = argparse.ArgumentParser()
-
-    parser.description = desc
-    parser.argument_default = argparse.SUPPRESS
+    Add PBAlignRunner arguments to the parser.
+    """
+    #parser.argument_default = argparse.SUPPRESS
     parser.formatter_class = argparse.RawTextHelpFormatter
 
     # Optional input.
@@ -486,41 +490,115 @@ def importDefaultOptions(parsedOptions, additionalDefaults=DEFAULT_OPTIONS):
     return newOptions, infoMsg.rstrip(', ')
 
 
-def parseOptions(argumentList, parser=None):
-    """Parse a list of arguments, return options and an info message.
-
-    If a parser is not specified, create a new parser, otherwise, use
-    the specifed parser. If there exists a config file, import options
-    from the config file and finally overwrite these options with
-    options from the argument list.
-
+class _ArgParser(argparse.ArgumentParser):
     """
-    # Obtain a constructed argument parser.
-    parser = constructOptionParser(parser)
+    Substitute for the standard argument parser, where parse_args is
+    extended to facilitate the use of config files.
+    """
+    def parse_args(self, args=None, namespace=None):
+        options = super(_ArgParser, self).parse_args(args=args,
+            namespace=namespace)
+    
+        # Import options from the specified config file, if it exists.
+        configOptions, infoMsg = importConfigOptions(options)
+    
+        # Parse argumentList for the second time in order to
+        # overwrite config options with options in argumentList.
+        newOptions = copy(configOptions)
+        newOptions.algorithmOptions = None
+        newOptions = super(_ArgParser, self).parse_args(namespace=newOptions,
+            args=args)
+    
+        # Overwrite config algorithmOptions if it is specified in argumentList
+        if newOptions.algorithmOptions is None:
+            if configOptions.algorithmOptions is not None:
+                newOptions.algorithmOptions = configOptions.algorithmOptions
+        else:
+            newOptions.algorithmOptions = \
+                " ".join(newOptions.algorithmOptions)   
 
-    # Parse argumentList for the first time in order to
-    # get a config file.
-    options = parser.parse_args(args=argumentList)
+        # FIXME gross hack to work around the problem of passing this
+        # parameter from a resolved tool contract
+        def unquote(s):
+            if s[0] in ["'", '"'] and s[-1] in ["'", '"']:
+                return s[1:-1]
+            return s
+        if newOptions.algorithmOptions is not None:
+            newOptions.algorithmOptions = unquote(newOptions.algorithmOptions)
+ 
+        # Return the updated options and an info message.
+        return newOptions #parser, newOptions, infoMsg
 
-    # Import options from the specified config file, if it exists.
-    configOptions, infoMsg = importConfigOptions(options)
+def get_argument_parser():
+    from pbalign.__init__ import get_version
+    p = _ArgParser(
+        version=get_version(),
+        description=Constants.PARSER_DESC,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    constructOptionParser(p)
+    add_resolved_tool_contract_option(p)
+    p.add_argument("--verbose", action="store_true", default=False)
+    add_debug_option(p)
+    p.add_argument(
+        "--profile", action="store_true",
+        help="Print runtime profile at exit")
+    # FIXME get rid of this
+    class EmitToolContractAction(argparse.Action):
+        def __call__(self, parser_, namespace, values, option_string=None):
+            parser2 = get_contract_parser()
+            sys.stdout.write(json.dumps(parser2.to_contract(), indent=4)+'\n')
+            sys.exit(0)
+    p.add_argument("--emit-tool-contract",
+                   nargs=0,
+                   action=EmitToolContractAction)
+    return p
 
-    # Parse argumentList for the second time in order to
-    # overwrite config options with options in argumentList.
-    newOptions = copy(configOptions)
-    newOptions.algorithmOptions = None
-    newOptions = parser.parse_args(namespace=newOptions, args=argumentList)
+# FIXME this should be unified with the standard argument parser
+def get_contract_parser():
+    nproc = 1 # XXX note that it's 8 above
+    resources = ()
+    p = get_default_contract_parser(
+        Constants.TOOL_ID,
+        Constants.VERSION,
+        Constants.PARSER_DESC,
+        Constants.DRIVER_EXE,
+        TaskTypes.DISTRIBUTED,
+        nproc,
+        resources)
+    p.add_input_file_type(FileTypes.DS_SUBREADS, "subreads",
+        "Subread DataSet", "SubreadSet or unaligned .bam")
+    p.add_input_file_type(FileTypes.DS_REF, "reference",
+        "ReferenceSet", "Reference DataSet or FASTA file")
+    p.add_output_file_type(FileTypes.BAM, "bam",
+        name="BAM file",
+        description="BAM file of aligned reads",
+        default_name="aligned.subreads.bam")
+    p.add_str(Constants.ALGORITHM_OPTIONS_ID, "algorithmOptions",
+        default=DEFAULT_OPTIONS["algorithmOptions"],
+        name="Algorithm options",
+        description="List of space-separated arguments passed to BLASR (etc.)")
+    # TODO lots of stuff missing here!
+    return p
 
-    # Overwrite config algorithmOptions if it is specified in argumentList
-    if newOptions.algorithmOptions is None:
-        if configOptions.algorithmOptions is not None:
-            newOptions.algorithmOptions = configOptions.algorithmOptions
-    else:
-        newOptions.algorithmOptions = \
-            " ".join(newOptions.algorithmOptions)
+def resolved_tool_contract_to_args(resolved_tool_contract):
+    rtc = resolved_tool_contract
+    p = get_argument_parser()
+    args = [
+        rtc.task.input_files[0],
+        rtc.task.input_files[1],
+        rtc.task.output_files[0],
+        "--nproc", str(resolved_tool_contract.task.nproc),
+    ]
+    if rtc.task.options[Constants.ALGORITHM_OPTIONS_ID]:
+        # FIXME this is gross: if I don't quote the options, the parser chokes;
+        # if I do quote them, the quotes get propagated, so I have to strip
+        # them off later
+        args.extend([
+            "--algorithmOptions=\"%s\"" %
+            rtc.task.options[Constants.ALGORITHM_OPTIONS_ID],
+        ])
+    return p.parse_args(args)
 
-    # Return the updated options and an info message.
-    return parser, newOptions, infoMsg
 
 #if __name__ == "__main__":
 #     import sys

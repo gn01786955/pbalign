@@ -14,6 +14,9 @@ def writeConfigFile(configFile, configOptions):
     with open (configFile, 'w') as f:
         f.write("\n".join(configOptions))
 
+def parseOptions(args):
+    return get_argument_parser().parse_args(args)
+
 class Test_Options(unittest.TestCase):
 
     def test_importConfigOptions(self):
@@ -30,10 +33,10 @@ class Test_Options(unittest.TestCase):
         self.assertEqual(int(newOptions.maxHits),     20)
         self.assertEqual(int(newOptions.minAccuracy), 40)
 
-    def test_ConstructOptionParser(self):
-        """Test constructOptionParser()."""
-        ret = constructOptionParser()
-        self.assertEqual(type(ret), argparse.ArgumentParser)
+    def test_get_argument_parser(self):
+        """Test get_argument_parser()."""
+        ret = get_argument_parser()
+        self.assertTrue(isinstance(ret, argparse.ArgumentParser))
 
     def test_parseOptions(self):
         """Test parseOptions()."""
@@ -57,7 +60,7 @@ class Test_Options(unittest.TestCase):
                         '--maxHits', '30',
                         '--minAccuracy', '50',
                         'readfile', 'reffile', 'outfile']
-        parser, options, infoMsg = parseOptions(argumentList)
+        options = parseOptions(argumentList)
 
         self.assertTrue(filecmp.cmp(options.configFile, configFile))
         self.assertEqual(int(options.maxHits),       30)
@@ -74,7 +77,7 @@ class Test_Options(unittest.TestCase):
         argumentList = ['--maxHits=30',
                         '--minAccuracy=50',
                         'readfile', 'reffile', 'outfile']
-        parser, options,infoMsg = parseOptions(argumentList)
+        options = parseOptions(argumentList)
 
         self.assertIsNone(options.configFile)
         self.assertEqual(int(options.maxHits),       30)
@@ -92,7 +95,7 @@ class Test_Options(unittest.TestCase):
                         'readfile', 'reffile', 'outfile']
 
         print argumentList
-        parser, options, infoMsg = parseOptions(argumentList)
+        options = parseOptions(argumentList)
         # Both algo1 and algo2 should be in algorithmOptions.
         print options.algorithmOptions
         #self.assertTrue(algo1 in options.algorithmOptions)
@@ -104,7 +107,7 @@ class Test_Options(unittest.TestCase):
 
         argumentList.append("--configFile={0}".format(configFile3))
         print argumentList
-        parser, options, infoMsg = parseOptions(argumentList)
+        options = parseOptions(argumentList)
         # Make sure algo3 have been overwritten.
         print options.algorithmOptions
         self.assertTrue(algo1 in options.algorithmOptions)
@@ -117,7 +120,7 @@ class Test_Options(unittest.TestCase):
         # whether both options.minAnchorSize and maxHits are None
         argumentList = ["--minAccuracy", "50",
                         'readfile', 'reffile', 'outfile']
-        parser, options,infoMsg = parseOptions(argumentList)
+        options = parseOptions(argumentList)
         self.assertIsNone(options.minAnchorSize)
         self.assertIsNone(options.maxHits)
 
