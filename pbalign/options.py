@@ -572,7 +572,7 @@ def get_contract_parser():
         "Subread DataSet", "SubreadSet or unaligned .bam")
     p.add_input_file_type(FileTypes.DS_REF, "reference",
         "ReferenceSet", "Reference DataSet or FASTA file")
-    p.add_output_file_type(FileTypes.BAM, "bam",
+    p.add_output_file_type(FileTypes.DS_BAM, "bam",
         name="BAM file",
         description="BAM file of aligned reads",
         default_name="aligned.subreads.bam")
