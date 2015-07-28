@@ -47,6 +47,9 @@ from pbcommand.common_options import add_resolved_tool_contract_option, \
 class Constants(object):
     TOOL_ID = "pbalign.tasks.pbalign"
     ALGORITHM_OPTIONS_ID = "pbalign.task_options.algorithm_options"
+    MIN_ACCURACY_ID = "pbalign.task_options.min_accuracy"
+    MIN_LENGTH_ID = "pbalign.task_options.min_length"
+    CONCORDANT_ID = "pbalign.task_options.concordant"
     DRIVER_EXE = "pbalign --resolved-tool-contract "
     VERSION = "3.0"
     PARSER_DESC = """\
@@ -82,8 +85,8 @@ DEFAULT_OPTIONS = {"regionTable": None,
                    "algorithmOptions": None,
                    "useccs": None,
                    # Filter options
-                   "maxDivergence": 30,
-                   "minAccuracy": 70,
+                   "maxDivergence": 30.0,
+                   "minAccuracy": 70.0,
                    "minLength": 50,
                    #"scoreFunction": SCOREFUNCTION_CANDIDATES[0],
                    "scoreCutoff": None,
@@ -574,9 +577,21 @@ def get_contract_parser():
         description="BAM file of aligned reads",
         default_name="aligned.subreads.bam")
     p.add_str(Constants.ALGORITHM_OPTIONS_ID, "algorithmOptions",
-        default=DEFAULT_OPTIONS["algorithmOptions"],
+        default="", #DEFAULT_OPTIONS["algorithmOptions"],
         name="Algorithm options",
         description="List of space-separated arguments passed to BLASR (etc.)")
+    p.add_float(Constants.MIN_ACCURACY_ID, "minAccuracy",
+        default=DEFAULT_OPTIONS["minAccuracy"],
+        name="Min. accuracy",
+        description="Minimum required alignment accuracy (percent)")
+    p.add_int(Constants.MIN_LENGTH_ID, "minLength",
+        default=DEFAULT_OPTIONS["minLength"],
+        name="Min. length",
+        description="Minimum required alignment length")
+    p.add_boolean(Constants.CONCORDANT_ID, "concordant",
+        default=DEFAULT_OPTIONS["concordant"],
+        name="Concordant alignment",
+        description="Map subreads of a ZMW to the same genomic location")
     # TODO lots of stuff missing here!
     return p
 
@@ -588,6 +603,8 @@ def resolved_tool_contract_to_args(resolved_tool_contract):
         rtc.task.input_files[1],
         rtc.task.output_files[0],
         "--nproc", str(resolved_tool_contract.task.nproc),
+        "--minAccuracy", str(rtc.task.options[Constants.MIN_ACCURACY_ID]),
+        "--minLength", str(rtc.task.options[Constants.MIN_LENGTH_ID]),
     ]
     if rtc.task.options[Constants.ALGORITHM_OPTIONS_ID]:
         # FIXME this is gross: if I don't quote the options, the parser chokes;
