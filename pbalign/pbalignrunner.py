@@ -225,7 +225,10 @@ class PBAlignRunner(PBToolRunner):
             from pbcore.io import AlignmentSet
             # Create {out}.xml, given {out}.bam
             outBam = str(outFile[0:-3]) + "bam"
-            AlignmentSet(real_ppath(outBam)).write(outFile)
+            aln = AlignmentSet(real_ppath(outBam))
+            for res in aln.externalResources:
+                res.reference = refFile
+            aln.write(outFile)
 
         if errCode != 0:
             errMsg = prog + " returned a non-zero exit status." + errMsg
