@@ -39,7 +39,8 @@ from copy import copy
 import json
 import sys
 
-from pbcommand.models import TaskTypes, FileTypes, get_default_contract_parser
+from pbcommand.models import TaskTypes, FileTypes, SymbolTypes, \
+    get_default_contract_parser
 from pbcommand.common_options import add_resolved_tool_contract_option, \
     add_debug_option
 
@@ -558,7 +559,6 @@ def get_argument_parser():
 
 # FIXME this should be unified with the standard argument parser
 def get_contract_parser():
-    nproc = 1 # XXX note that it's 8 above
     resources = ()
     p = get_default_contract_parser(
         Constants.TOOL_ID,
@@ -566,7 +566,7 @@ def get_contract_parser():
         Constants.PARSER_DESC,
         Constants.DRIVER_EXE,
         TaskTypes.DISTRIBUTED,
-        nproc,
+        SymbolTypes.MAX_NPROC,
         resources)
     p.add_input_file_type(FileTypes.DS_SUBREADS, "subreads",
         "Subread DataSet", "SubreadSet or unaligned .bam")
@@ -575,7 +575,7 @@ def get_contract_parser():
     p.add_output_file_type(FileTypes.DS_BAM, "bam",
         name="BAM file",
         description="BAM file of aligned reads",
-        default_name="aligned.subreads.bam")
+        default_name="aligned.subreads.xml")
     p.add_str(Constants.ALGORITHM_OPTIONS_ID, "algorithmOptions",
         default="", #DEFAULT_OPTIONS["algorithmOptions"],
         name="Algorithm options",
