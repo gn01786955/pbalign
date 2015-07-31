@@ -10,8 +10,6 @@ REF_DIR = "/mnt/secondary-siv/references"
 @unittest.skipUnless(os.path.isdir(DATA_DIR), "%s missing" % DATA_DIR)
 class TestPbalign(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "pbalign "
-    DRIVER_EMIT = DRIVER_BASE + " --emit-tool-contract "
-    DRIVER_RESOLVE = DRIVER_BASE + " --resolved-tool-contract "
     REQUIRES_PBCORE = True
     INPUT_FILES = [
         os.path.join(DATA_DIR, "lambda", "2372215", "0007_tiny",

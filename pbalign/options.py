@@ -39,8 +39,7 @@ from copy import copy
 import json
 import sys
 
-from pbcommand.models import TaskTypes, FileTypes, SymbolTypes, \
-    get_default_contract_parser
+from pbcommand.models import FileTypes, SymbolTypes, get_pbparser
 from pbcommand.common_options import add_resolved_tool_contract_option, \
     add_debug_option
 
@@ -550,7 +549,8 @@ def get_argument_parser():
     class EmitToolContractAction(argparse.Action):
         def __call__(self, parser_, namespace, values, option_string=None):
             parser2 = get_contract_parser()
-            sys.stdout.write(json.dumps(parser2.to_contract(), indent=4)+'\n')
+            sys.stdout.write(json.dumps(parser2.to_contract().to_dict(),
+                indent=4)+'\n')
             sys.exit(0)
     p.add_argument("--emit-tool-contract",
                    nargs=0,
@@ -560,19 +560,18 @@ def get_argument_parser():
 # FIXME this should be unified with the standard argument parser
 def get_contract_parser():
     resources = ()
-    p = get_default_contract_parser(
-        Constants.TOOL_ID,
-        Constants.VERSION,
-        Constants.PARSER_DESC,
-        Constants.DRIVER_EXE,
-        TaskTypes.DISTRIBUTED,
-        SymbolTypes.MAX_NPROC,
-        resources)
+    p = get_pbparser(
+        tool_id=Constants.TOOL_ID,
+        version=Constants.VERSION,
+        name=Constants.TOOL_ID,
+        description=Constants.PARSER_DESC,
+        driver_exe=Constants.DRIVER_EXE,
+        nproc=SymbolTypes.MAX_NPROC)
     p.add_input_file_type(FileTypes.DS_SUBREADS, "subreads",
         "Subread DataSet", "SubreadSet or unaligned .bam")
     p.add_input_file_type(FileTypes.DS_REF, "reference",
         "ReferenceSet", "Reference DataSet or FASTA file")
-    p.add_output_file_type(FileTypes.DS_BAM, "bam",
+    p.add_output_file_type(FileTypes.DS_ALIGN, "bam",
         name="BAM file",
         description="BAM file of aligned reads",
         default_name="aligned.subreads.xml")

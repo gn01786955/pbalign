@@ -328,6 +328,11 @@ class PBAlignRunner(PBToolRunner):
         return 0
 
 def args_runner(args):
+    log = logging.getLogger()
+    if args.verbose:
+        log.setLevel(logging.INFO)
+    else:
+        log.setLevel(logging.WARN)
     # PBAlignRunner inherits PBToolRunner. So PBAlignRunner.start() parses args,
     # sets up logging and finally returns run().
     return PBAlignRunner(args).start()
@@ -337,7 +342,7 @@ def resolved_tool_contract_runner(resolved_tool_contract):
     return args_runner(args)
 
 def main(argv=sys.argv):
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.WARN)
     log = logging.getLogger()
     mp = get_argument_parser()
     return pacbio_args_or_contract_runner(argv[1:],
@@ -345,7 +350,7 @@ def main(argv=sys.argv):
                                           args_runner,
                                           resolved_tool_contract_runner,
                                           log,
-                                          lambda *args: log)
+                                          setup_log)
 
 if __name__ == "__main__":
     sys.exit(main())
