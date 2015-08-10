@@ -107,8 +107,14 @@ def constructOptionParser(parser):
     """
     Add PBAlignRunner arguments to the parser.
     """
+    # save reference to PbParser
+    p = parser
+    tcp = p.tool_contract_parser
+    parser = parser.arg_parser.parser
     #parser.argument_default = argparse.SUPPRESS
     parser.formatter_class = argparse.RawTextHelpFormatter
+    parser.add_argument("--verbose", action="store_true")
+    add_debug_option(parser)
 
     # Optional input.
     input_group = parser.add_argument_group("Optional input arguments")
@@ -199,6 +205,10 @@ def constructOptionParser(parser):
                         default=DEFAULT_OPTIONS["concordant"],
                         action="store_true",
                         help=helpstr)
+    tcp.add_boolean(Constants.CONCORDANT_ID, "concordant",
+        default=DEFAULT_OPTIONS["concordant"],
+        name="Concordant alignment",
+        description="Map subreads of a ZMW to the same genomic location")
 
     helpstr = "Number of threads. Default value is {v}."\
               .format(v=DEFAULT_OPTIONS["nproc"])
@@ -216,6 +226,10 @@ def constructOptionParser(parser):
                         default=None,
                         action="append",
                         help="Pass alignment options through.")
+    tcp.add_str(Constants.ALGORITHM_OPTIONS_ID, "algorithmOptions",
+        default="", #DEFAULT_OPTIONS["algorithmOptions"],
+        name="Algorithm options",
+        description="List of space-separated arguments passed to BLASR (etc.)")
 
     # Filtering criteria and hit policy.
     filter_group = parser.add_argument_group("Filter criteria options")
@@ -240,6 +254,10 @@ def constructOptionParser(parser):
                         #default=70,
                         action="store",
                         help=helpstr)
+    tcp.add_float(Constants.MIN_ACCURACY_ID, "minAccuracy",
+        default=DEFAULT_OPTIONS["minAccuracy"],
+        name="Min. accuracy",
+        description="Minimum required alignment accuracy (percent)")
 
     helpstr = "The minimum aligned read length of alignments that\n" + \
               "will be evaluated. Default value is {v}." \
@@ -250,6 +268,10 @@ def constructOptionParser(parser):
                         default=DEFAULT_OPTIONS["minLength"],
                         action="store",
                         help=helpstr)
+    tcp.add_int(Constants.MIN_LENGTH_ID, "minLength",
+        default=DEFAULT_OPTIONS["minLength"],
+        name="Min. length",
+        description="Minimum required alignment length")
 
     #helpstr = "Specify a score function for evaluating alignments.\n"
     #helpstr += "  alignerscore : aligner's score in the SAM tag 'as'.\n"
@@ -398,25 +420,14 @@ def constructOptionParser(parser):
                         help=argparse.SUPPRESS)
 
     # Required options: inputs and outputs.
-    helpstr = "The input file can be a FASTA, PLX.H5, BAX.H5, CCS.H5\n" + \
-              ", XML file or a fofn."
-    misc_group.add_argument("inputFileName",
-                        type=str,
-                        action="store",
-                        help=helpstr)
-
-    helpstr = "Either a reference FASTA file, XML file or a reference\n" + \
-              "repository."
-    parser.add_argument("referencePath",
-                        type=str,
-                        action="store",
-                        help=helpstr)
-
-    parser.add_argument("outputFileName",
-                        type=str,
-                        action="store",
-                        help="The output CMP.H5, SAM, BAM or XML file.")
-
+    p.add_input_file_type(FileTypes.DS_SUBREADS, "inputFileName",
+        "Subread DataSet", "SubreadSet or unaligned .bam")
+    p.add_input_file_type(FileTypes.DS_REF, "referencePath",
+        "ReferenceSet", "Reference DataSet or FASTA file")
+    p.add_output_file_type(FileTypes.DS_ALIGN, "outputFileName",
+        name="XML DataSet",
+        description="Output AlignmentSet file",
+        default_name="aligned.subreads.xml")
     return parser
 
 
@@ -532,32 +543,6 @@ class _ArgParser(argparse.ArgumentParser):
         # Return the updated options and an info message.
         return newOptions #parser, newOptions, infoMsg
 
-def get_argument_parser():
-    from pbalign.__init__ import get_version
-    p = _ArgParser(
-        version=get_version(),
-        description=Constants.PARSER_DESC,
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    constructOptionParser(p)
-    add_resolved_tool_contract_option(p)
-    p.add_argument("--verbose", action="store_true", default=False)
-    add_debug_option(p)
-    p.add_argument(
-        "--profile", action="store_true",
-        help="Print runtime profile at exit")
-    # FIXME get rid of this
-    class EmitToolContractAction(argparse.Action):
-        def __call__(self, parser_, namespace, values, option_string=None):
-            parser2 = get_contract_parser()
-            sys.stdout.write(json.dumps(parser2.to_contract().to_dict(),
-                indent=4)+'\n')
-            sys.exit(0)
-    p.add_argument("--emit-tool-contract",
-                   nargs=0,
-                   action=EmitToolContractAction)
-    return p
-
-# FIXME this should be unified with the standard argument parser
 def get_contract_parser():
     resources = ()
     p = get_pbparser(
@@ -567,36 +552,19 @@ def get_contract_parser():
         description=Constants.PARSER_DESC,
         driver_exe=Constants.DRIVER_EXE,
         nproc=SymbolTypes.MAX_NPROC)
-    p.add_input_file_type(FileTypes.DS_SUBREADS, "subreads",
-        "Subread DataSet", "SubreadSet or unaligned .bam")
-    p.add_input_file_type(FileTypes.DS_REF, "reference",
-        "ReferenceSet", "Reference DataSet or FASTA file")
-    p.add_output_file_type(FileTypes.DS_ALIGN, "bam",
-        name="BAM file",
-        description="BAM file of aligned reads",
-        default_name="aligned.subreads.xml")
-    p.add_str(Constants.ALGORITHM_OPTIONS_ID, "algorithmOptions",
-        default="", #DEFAULT_OPTIONS["algorithmOptions"],
-        name="Algorithm options",
-        description="List of space-separated arguments passed to BLASR (etc.)")
-    p.add_float(Constants.MIN_ACCURACY_ID, "minAccuracy",
-        default=DEFAULT_OPTIONS["minAccuracy"],
-        name="Min. accuracy",
-        description="Minimum required alignment accuracy (percent)")
-    p.add_int(Constants.MIN_LENGTH_ID, "minLength",
-        default=DEFAULT_OPTIONS["minLength"],
-        name="Min. length",
-        description="Minimum required alignment length")
-    p.add_boolean(Constants.CONCORDANT_ID, "concordant",
-        default=DEFAULT_OPTIONS["concordant"],
-        name="Concordant alignment",
-        description="Map subreads of a ZMW to the same genomic location")
-    # TODO lots of stuff missing here!
+    p.arg_parser.parser = _ArgParser(
+        version=Constants.VERSION,
+        description=Constants.PARSER_DESC,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    constructOptionParser(p)
+    p.arg_parser.parser.add_argument(
+        "--profile", action="store_true",
+        help="Print runtime profile at exit")
     return p
 
 def resolved_tool_contract_to_args(resolved_tool_contract):
     rtc = resolved_tool_contract
-    p = get_argument_parser()
+    p = get_contract_parser().arg_parser.parser
     args = [
         rtc.task.input_files[0],
         rtc.task.input_files[1],

@@ -1,6 +1,7 @@
 from pbalign.options import *
 from argparse import *
 from os import path
+import os
 import filecmp
 import unittest
 from test_setpath import ROOT_DIR
@@ -8,6 +9,9 @@ from test_setpath import ROOT_DIR
 rootDir = ROOT_DIR
 configFile = path.join(rootDir, "data/2.config")
 configFile3 = path.join(rootDir, "data/3.config")
+
+def get_argument_parser():
+    return get_contract_parser().arg_parser.parser
 
 def writeConfigFile(configFile, configOptions):
     """Write configs to a file."""
@@ -18,6 +22,17 @@ def parseOptions(args):
     return get_argument_parser().parse_args(args)
 
 class Test_Options(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        cls.infiles = ["tmp_readfile.bam", "tmp_reffile.fasta"]
+        for file_name in cls.infiles:
+            open(file_name, "w").write("\n")
+
+    @classmethod
+    def tearDownClass(cls):
+        for file_name in cls.infiles:
+            os.remove(file_name)
 
     def test_importConfigOptions(self):
         """Test importConfigOptions()."""
@@ -56,10 +71,11 @@ class Test_Options(unittest.TestCase):
     def test_parseOptions_with_config(self):
         """Test parseOptions with a config file."""
         # With the above config file
-        argumentList = ['--configFile', configFile,
-                        '--maxHits', '30',
-                        '--minAccuracy', '50',
-                        'readfile', 'reffile', 'outfile']
+        argumentList = [
+            '--configFile', configFile,
+            '--maxHits', '30',
+            '--minAccuracy', '50',
+        ] + self.infiles + ['outfile']
         options = parseOptions(argumentList)
 
         self.assertTrue(filecmp.cmp(options.configFile, configFile))
@@ -75,8 +91,8 @@ class Test_Options(unittest.TestCase):
     def test_parseOptions_without_config(self):
         """Test parseOptions without any config file."""
         argumentList = ['--maxHits=30',
-                        '--minAccuracy=50',
-                        'readfile', 'reffile', 'outfile']
+                        '--minAccuracy=50'
+        ] + self.infiles + ['outfile']
         options = parseOptions(argumentList)
 
         self.assertIsNone(options.configFile)
@@ -90,10 +106,10 @@ class Test_Options(unittest.TestCase):
         algo1 = " -holeNumbers 1"
         algo2 = " -nCandidate 25"
         algo3 = " ' -bestn 11 '"
-        argumentList = ['--algorithmOptions=%s' % algo1,
-                        '--algorithmOptions=%s' % algo2,
-                        'readfile', 'reffile', 'outfile']
-
+        argumentList = [
+            '--algorithmOptions=%s' % algo1,
+            '--algorithmOptions=%s' % algo2,
+        ] + self.infiles + ["outfile"]
         print argumentList
         options = parseOptions(argumentList)
         # Both algo1 and algo2 should be in algorithmOptions.
@@ -118,8 +134,7 @@ class Test_Options(unittest.TestCase):
         """Test parseOptions without specifying maxHits and minAccuracy."""
         # Test if maxHits and minAccuracy are not set,
         # whether both options.minAnchorSize and maxHits are None
-        argumentList = ["--minAccuracy", "50",
-                        'readfile', 'reffile', 'outfile']
+        argumentList = ["--minAccuracy", "50"] + self.infiles + ["outfile.bam"]
         options = parseOptions(argumentList)
         self.assertIsNone(options.minAnchorSize)
         self.assertIsNone(options.maxHits)

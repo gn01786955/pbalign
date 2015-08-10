@@ -45,14 +45,14 @@ import time
 import sys
 import shutil
 
-from pbcommand.cli import pacbio_args_or_contract_runner
+from pbcommand.cli import pbparser_runner
 from pbcommand.utils import setup_log
 from pbcore.util.Process import backticks
 from pbcore.util.ToolRunner import PBToolRunner
 
 
 from pbalign.__init__ import get_version
-from pbalign.options import (ALGORITHM_CANDIDATES, get_argument_parser,
+from pbalign.options import (ALGORITHM_CANDIDATES, get_contract_parser,
     resolved_tool_contract_to_args)
 from pbalign.alignservice.blasr import BlasrService
 from pbalign.alignservice.bowtie import BowtieService
@@ -75,7 +75,7 @@ class PBAlignRunner(PBToolRunner):
         """
         desc = "Utilities for aligning PacBio reads to reference sequences."
         if args is None: # FIXME unit testing hack
-            args = get_argument_parser().parse_args(argumentList)
+            args = get_contract_parser().arg_parser.parser.parse_args(argumentList)
         self.args = args
         # args.verbosity is computed by counting # of 'v's in '-vv...'.
         # However in parseOptions, arguments are parsed twice to import config
@@ -344,13 +344,13 @@ def resolved_tool_contract_runner(resolved_tool_contract):
 def main(argv=sys.argv):
     logging.basicConfig(level=logging.WARN)
     log = logging.getLogger()
-    mp = get_argument_parser()
-    return pacbio_args_or_contract_runner(argv[1:],
-                                          mp,
-                                          args_runner,
-                                          resolved_tool_contract_runner,
-                                          log,
-                                          setup_log)
+    return pbparser_runner(
+        argv=argv[1:],
+        parser=get_contract_parser(),
+        args_runner_func=args_runner,
+        contract_runner_func=resolved_tool_contract_runner,
+        alog=log,
+        setup_log_func=setup_log)
 
 if __name__ == "__main__":
     sys.exit(main())
