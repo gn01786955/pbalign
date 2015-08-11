@@ -341,12 +341,12 @@ def resolved_tool_contract_runner(resolved_tool_contract):
     args = resolved_tool_contract_to_args(resolved_tool_contract)
     return args_runner(args)
 
-def main(argv=sys.argv):
+def main(argv=sys.argv, get_parser_func=get_contract_parser):
     logging.basicConfig(level=logging.WARN)
     log = logging.getLogger()
     return pbparser_runner(
         argv=argv[1:],
-        parser=get_contract_parser(),
+        parser=get_parser_func(),
         args_runner_func=args_runner,
         contract_runner_func=resolved_tool_contract_runner,
         alog=log,

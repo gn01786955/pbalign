@@ -20,5 +20,14 @@ class TestPbalign(pbcommand.testkit.PbTestApp):
         "pbalign.task_options.algorithm_options": "-holeNumbers 1-1000,30000-30500,60000-60600,100000-100500",
     }
 
+
+@unittest.skip("PLEASE CREATE TEST DATA FOR CCS ALIGNMENT")
+class TestPbalignCCS(pbcommand.testkit.PbTestApp):
+    DRIVER_BASE = "python -m pbalign.ccs"
+    INPUT_FILES = [
+        # FIXME
+    ]
+
+
 if __name__ == "__main__":
     unittest.main()

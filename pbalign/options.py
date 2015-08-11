@@ -46,6 +46,9 @@ from pbcommand.common_options import add_resolved_tool_contract_option, \
 
 class Constants(object):
     TOOL_ID = "pbalign.tasks.pbalign"
+    INPUT_FILE_TYPE = FileTypes.DS_SUBREADS
+    OUTPUT_FILE_TYPE = FileTypes.DS_ALIGN
+    OUTPUT_FILE_NAME = "aligned.subreads.xml"
     ALGORITHM_OPTIONS_ID = "pbalign.task_options.algorithm_options"
     MIN_ACCURACY_ID = "pbalign.task_options.min_accuracy"
     MIN_LENGTH_ID = "pbalign.task_options.min_length"
@@ -418,16 +421,6 @@ def constructOptionParser(parser):
                         action="store_true",
                         default=False,
                         help=argparse.SUPPRESS)
-
-    # Required options: inputs and outputs.
-    p.add_input_file_type(FileTypes.DS_SUBREADS, "inputFileName",
-        "Subread DataSet", "SubreadSet or unaligned .bam")
-    p.add_input_file_type(FileTypes.DS_REF, "referencePath",
-        "ReferenceSet", "Reference DataSet or FASTA file")
-    p.add_output_file_type(FileTypes.DS_ALIGN, "outputFileName",
-        name="XML DataSet",
-        description="Output AlignmentSet file",
-        default_name="aligned.subreads.xml")
     return parser
 
 
@@ -543,19 +536,33 @@ class _ArgParser(argparse.ArgumentParser):
         # Return the updated options and an info message.
         return newOptions #parser, newOptions, infoMsg
 
-def get_contract_parser():
+def get_contract_parser(C=Constants):
+    """
+    Create and populate the combined tool contract/argument parser.  This
+    method can optionally be overridden with a different Constants object for
+    defining additional tasks (e.g. CCS alignment).
+    """
     resources = ()
     p = get_pbparser(
-        tool_id=Constants.TOOL_ID,
-        version=Constants.VERSION,
-        name=Constants.TOOL_ID,
-        description=Constants.PARSER_DESC,
-        driver_exe=Constants.DRIVER_EXE,
+        tool_id=C.TOOL_ID,
+        version=C.VERSION,
+        name=C.TOOL_ID,
+        description=C.PARSER_DESC,
+        driver_exe=C.DRIVER_EXE,
         nproc=SymbolTypes.MAX_NPROC)
     p.arg_parser.parser = _ArgParser(
-        version=Constants.VERSION,
-        description=Constants.PARSER_DESC,
+        version=C.VERSION,
+        description=C.PARSER_DESC,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    # Required options: inputs and outputs.
+    p.add_input_file_type(C.INPUT_FILE_TYPE, "inputFileName",
+        "Subread DataSet", "SubreadSet or unaligned .bam")
+    p.add_input_file_type(FileTypes.DS_REF, "referencePath",
+        "ReferenceSet", "Reference DataSet or FASTA file")
+    p.add_output_file_type(C.OUTPUT_FILE_TYPE, "outputFileName",
+        name="XML DataSet",
+        description="Output AlignmentSet file",
+        default_name=C.OUTPUT_FILE_NAME)
     constructOptionParser(p)
     p.arg_parser.parser.add_argument(
         "--profile", action="store_true",
@@ -582,10 +589,3 @@ def resolved_tool_contract_to_args(resolved_tool_contract):
             rtc.task.options[Constants.ALGORITHM_OPTIONS_ID],
         ])
     return p.parse_args(args)
-
-
-#if __name__ == "__main__":
-#     import sys
-#     parser = argparse.ArgumentParser()
-#     parser, options, info = parseOptions(argumentList = sys.argv[1:],
-#                                          parser=parser)
