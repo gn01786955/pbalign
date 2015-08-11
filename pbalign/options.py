@@ -50,9 +50,13 @@ class Constants(object):
     OUTPUT_FILE_TYPE = FileTypes.DS_ALIGN
     OUTPUT_FILE_NAME = "aligned.subreads.xml"
     ALGORITHM_OPTIONS_ID = "pbalign.task_options.algorithm_options"
+    ALGORITHM_OPTIONS_DEFAULT = "-useQuality -minMatch 12 -bestn 10 -minPctIdentity 70.0"
     MIN_ACCURACY_ID = "pbalign.task_options.min_accuracy"
     MIN_LENGTH_ID = "pbalign.task_options.min_length"
     CONCORDANT_ID = "pbalign.task_options.concordant"
+    USECCS_ID = "pbalign.task_options.useccs"
+    USECCS_DEFAULT = ""
+    HIT_POLICY_ID = "pbalign.task_options.hit_policy"
     DRIVER_EXE = "pbalign --resolved-tool-contract "
     VERSION = "3.0"
     PARSER_DESC = """\
@@ -106,7 +110,7 @@ DEFAULT_OPTIONS = {"regionTable": None,
                    "seed": 1,
                    "tmpDir": "/scratch"}
 
-def constructOptionParser(parser):
+def constructOptionParser(parser, C=Constants):
     """
     Add PBAlignRunner arguments to the parser.
     """
@@ -192,6 +196,10 @@ def constructOptionParser(parser):
                         action="store",
                         default=None,
                         help=helpstr)
+    tcp.add_str(C.USECCS_ID, "useccs",
+        default=C.USECCS_DEFAULT,
+        name="Use CCS",
+        description=helpstr)
 
     helpstr = "Do not split reads into subreads even if subread \n" + \
               "regions are available. Default value is {0}."\
@@ -208,7 +216,7 @@ def constructOptionParser(parser):
                         default=DEFAULT_OPTIONS["concordant"],
                         action="store_true",
                         help=helpstr)
-    tcp.add_boolean(Constants.CONCORDANT_ID, "concordant",
+    tcp.add_boolean(C.CONCORDANT_ID, "concordant",
         default=DEFAULT_OPTIONS["concordant"],
         name="Concordant alignment",
         description="Map subreads of a ZMW to the same genomic location")
@@ -229,8 +237,10 @@ def constructOptionParser(parser):
                         default=None,
                         action="append",
                         help="Pass alignment options through.")
-    tcp.add_str(Constants.ALGORITHM_OPTIONS_ID, "algorithmOptions",
-        default="", #DEFAULT_OPTIONS["algorithmOptions"],
+    # XXX the arguments used in SMRTpipe 2.3 are different from the defaults
+    # for the command line tool
+    tcp.add_str(C.ALGORITHM_OPTIONS_ID, "algorithmOptions",
+        default=C.ALGORITHM_OPTIONS_DEFAULT,
         name="Algorithm options",
         description="List of space-separated arguments passed to BLASR (etc.)")
 
@@ -257,7 +267,7 @@ def constructOptionParser(parser):
                         #default=70,
                         action="store",
                         help=helpstr)
-    tcp.add_float(Constants.MIN_ACCURACY_ID, "minAccuracy",
+    tcp.add_float(C.MIN_ACCURACY_ID, "minAccuracy",
         default=DEFAULT_OPTIONS["minAccuracy"],
         name="Min. accuracy",
         description="Minimum required alignment accuracy (percent)")
@@ -271,7 +281,7 @@ def constructOptionParser(parser):
                         default=DEFAULT_OPTIONS["minLength"],
                         action="store",
                         help=helpstr)
-    tcp.add_int(Constants.MIN_LENGTH_ID, "minLength",
+    tcp.add_int(C.MIN_LENGTH_ID, "minLength",
         default=DEFAULT_OPTIONS["minLength"],
         name="Min. length",
         description="Minimum required alignment length")
@@ -333,6 +343,10 @@ def constructOptionParser(parser):
                         default=DEFAULT_OPTIONS["hitPolicy"],
                         action="store",
                         help=helpstr)
+    tcp.add_str(C.HIT_POLICY_ID, "hitPolicy",
+        default=DEFAULT_OPTIONS["hitPolicy"],
+        name="Hit policy",
+        description=helpstr)
 
     helpstr = "If specified, do not report adapter-only hits using\n" + \
               "annotations with the reference entry."
@@ -579,6 +593,7 @@ def resolved_tool_contract_to_args(resolved_tool_contract):
         "--nproc", str(resolved_tool_contract.task.nproc),
         "--minAccuracy", str(rtc.task.options[Constants.MIN_ACCURACY_ID]),
         "--minLength", str(rtc.task.options[Constants.MIN_LENGTH_ID]),
+        "--hitPolicy", str(rtc.task.options[Constants.HIT_POLICY_ID]),
     ]
     if rtc.task.options[Constants.ALGORITHM_OPTIONS_ID]:
         # FIXME this is gross: if I don't quote the options, the parser chokes;
@@ -588,4 +603,8 @@ def resolved_tool_contract_to_args(resolved_tool_contract):
             "--algorithmOptions=\"%s\"" %
             rtc.task.options[Constants.ALGORITHM_OPTIONS_ID],
         ])
+    if rtc.task.options[Constants.CONCORDANT_ID]:
+        args.append("--concordant")
+    if rtc.task.options[Constants.USECCS_ID]:
+        args.extend([ "--useccs", rtc.task.options[Constants.USECCS_ID] ])
     return p.parse_args(args)

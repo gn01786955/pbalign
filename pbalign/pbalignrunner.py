@@ -49,6 +49,7 @@ from pbcommand.cli import pbparser_runner
 from pbcommand.utils import setup_log
 from pbcore.util.Process import backticks
 from pbcore.util.ToolRunner import PBToolRunner
+from pbcore.io import AlignmentSet, ConsensusAlignmentSet
 
 
 from pbalign.__init__ import get_version
@@ -222,10 +223,13 @@ class PBAlignRunner(PBToolRunner):
         elif outFormat == FILE_FORMATS.XML:
             logging.info("OutputService: Generating the output XML file".
                          format(samFile=inSam, outFile=outFile))
-            from pbcore.io import AlignmentSet
             # Create {out}.xml, given {out}.bam
             outBam = str(outFile[0:-3]) + "bam"
-            aln = AlignmentSet(real_ppath(outBam))
+            aln = None
+            if self.args.readType == "CCS":
+                aln = ConsensusAlignmentSet(real_ppath(outBam))
+            else:
+                aln = AlignmentSet(real_ppath(outBam))
             for res in aln.externalResources:
                 res.reference = refFile
             aln.write(outFile)
