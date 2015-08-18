@@ -590,6 +590,7 @@ def resolved_tool_contract_to_args(resolved_tool_contract):
         rtc.task.input_files[0],
         rtc.task.input_files[1],
         rtc.task.output_files[0],
+        "--verbose",
         "--nproc", str(resolved_tool_contract.task.nproc),
         "--minAccuracy", str(rtc.task.options[Constants.MIN_ACCURACY_ID]),
         "--minLength", str(rtc.task.options[Constants.MIN_LENGTH_ID]),
