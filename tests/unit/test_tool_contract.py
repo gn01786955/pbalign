@@ -3,8 +3,10 @@ import unittest
 import os.path
 
 import pbcommand.testkit
+from pbcore.io import ConsensusAlignmentSet, openDataSet
 
 DATA_DIR = "/mnt/secondary-siv/testdata/SA3-RS"
+DATA2 = "/mnt/secondary-siv/testdata/pbalign-unittest2/data"
 REF_DIR = "/mnt/secondary-siv/references"
 
 @unittest.skipUnless(os.path.isdir(DATA_DIR), "%s missing" % DATA_DIR)
@@ -21,13 +23,19 @@ class TestPbalign(pbcommand.testkit.PbTestApp):
     }
 
 
-@unittest.skip("PLEASE CREATE TEST DATA FOR CCS ALIGNMENT")
+#@unittest.skipUnless(os.path.isdir(DATA2))
+@unittest.skip("disabled pending fix for blasr bug 27470")
 class TestPbalignCCS(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "python -m pbalign.ccs"
     INPUT_FILES = [
-        # FIXME
+        os.path.join(DATA2, "dataset.ccsreads.xml"),
+        os.path.join(REF_DIR, "lambda", "reference.dataset.xml"),
     ]
 
+    def run_after(self, rtc, output_dir):
+        ds_out = openDataSet(rtc.task.output_files[0])
+        self.assertTrue(isinstance(ds_out, ConsensusAlignmentSet),
+                        type(ds_out).__name__)
 
 if __name__ == "__main__":
     unittest.main()

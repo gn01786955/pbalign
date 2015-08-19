@@ -40,6 +40,7 @@ or CMP.H5 file.
 
 # Author: Yuan Li
 
+import functools
 import logging
 import time
 import sys
@@ -49,8 +50,8 @@ from pbcommand.cli import pbparser_runner
 from pbcommand.utils import setup_log
 from pbcore.util.Process import backticks
 from pbcore.util.ToolRunner import PBToolRunner
-from pbcore.io import AlignmentSet, ConsensusAlignmentSet
-
+from pbcore.io import (AlignmentSet, ConsensusAlignmentSet, ConsensusReadSet,
+                       openDataSet)
 
 from pbalign.__init__ import get_version
 from pbalign.options import (ALGORITHM_CANDIDATES, get_contract_parser,
@@ -69,7 +70,8 @@ class PBAlignRunner(PBToolRunner):
 
     """Tool runner."""
 
-    def __init__(self, args=None, argumentList=()):
+    def __init__(self, args=None, argumentList=(),
+                 output_dataset_type=AlignmentSet):
         """Initialize a PBAlignRunner object.
            argumentList is a list of arguments, such as:
            ['--debug', '--maxHits', '10', 'in.fasta', 'ref.fasta', 'out.sam']
@@ -86,6 +88,7 @@ class PBAlignRunner(PBToolRunner):
         #    (int(self.args.verbosity) / 2 + 1)
         self.args.verbosity = 2 if self.args.verbose else 1
         super(PBAlignRunner, self).__init__(desc)
+        self._output_dataset_type = output_dataset_type
         self._alnService = None
         self._filterService = None
         self.fileNames = PBAlignFiles()
@@ -226,10 +229,10 @@ class PBAlignRunner(PBToolRunner):
             # Create {out}.xml, given {out}.bam
             outBam = str(outFile[0:-3]) + "bam"
             aln = None
+            # FIXME This should really be more automatic
             if self.args.readType == "CCS":
-                aln = ConsensusAlignmentSet(real_ppath(outBam))
-            else:
-                aln = AlignmentSet(real_ppath(outBam))
+                self._output_dataset_type = ConsensusAlignmentSet
+            aln = self._output_dataset_type(real_ppath(outBam))
             for res in aln.externalResources:
                 res.reference = refFile
             aln.write(outFile)
@@ -331,7 +334,7 @@ class PBAlignRunner(PBToolRunner):
         logging.info("Total time: {:.2f} s.".format(float(endTime - startTime)))
         return 0
 
-def args_runner(args):
+def args_runner(args, output_dataset_type=AlignmentSet):
     log = logging.getLogger()
     if args.verbose:
         log.setLevel(logging.INFO)
@@ -339,20 +342,31 @@ def args_runner(args):
         log.setLevel(logging.WARN)
     # PBAlignRunner inherits PBToolRunner. So PBAlignRunner.start() parses args,
     # sets up logging and finally returns run().
-    return PBAlignRunner(args).start()
+    return PBAlignRunner(args, output_dataset_type=output_dataset_type).start()
 
-def resolved_tool_contract_runner(resolved_tool_contract):
+def _resolved_tool_contract_runner(output_dataset_type,
+                                   resolved_tool_contract):
+    """
+    Template function for running from a tool contract with an explicitly
+    specified output dataset type.
+    """
     args = resolved_tool_contract_to_args(resolved_tool_contract)
-    return args_runner(args)
+    return args_runner(args, output_dataset_type=output_dataset_type)
 
-def main(argv=sys.argv, get_parser_func=get_contract_parser):
+resolved_tool_contract_runner = functools.partial(
+    _resolved_tool_contract_runner, AlignmentSet)
+resolved_tool_contract_runner_ccs = functools.partial(
+    _resolved_tool_contract_runner, ConsensusAlignmentSet)
+
+def main(argv=sys.argv, get_parser_func=get_contract_parser,
+         contract_runner_func=resolved_tool_contract_runner):
     logging.basicConfig(level=logging.WARN)
     log = logging.getLogger()
     return pbparser_runner(
         argv=argv[1:],
         parser=get_parser_func(),
         args_runner_func=args_runner,
-        contract_runner_func=resolved_tool_contract_runner,
+        contract_runner_func=contract_runner_func,
         alog=log,
         setup_log_func=setup_log)
 

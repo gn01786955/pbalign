@@ -27,7 +27,8 @@ def get_parser():
 def main(argv=sys.argv):
     return pbalignrunner.main(
         argv=argv,
-        get_parser_func=get_parser)
+        get_parser_func=get_parser,
+        contract_runner_func=pbalignrunner.resolved_tool_contract_runner_ccs)
 
 if __name__ == "__main__":
     sys.exit(main())
