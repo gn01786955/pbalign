@@ -3,7 +3,7 @@ import unittest
 import os.path
 
 import pbcommand.testkit
-from pbcore.io import ConsensusAlignmentSet, openDataSet
+from pbcore.io import AlignmentSet, ConsensusAlignmentSet, openDataSet
 
 DATA_DIR = "/mnt/secondary-siv/testdata/SA3-RS"
 DATA2 = "/mnt/secondary-siv/testdata/pbalign-unittest2/data"
@@ -22,9 +22,13 @@ class TestPbalign(pbcommand.testkit.PbTestApp):
         "pbalign.task_options.algorithm_options": "-holeNumbers 1-1000,30000-30500,60000-60600,100000-100500",
     }
 
+    def run_after(self, rtc, output_dir):
+        ds_out = openDataSet(rtc.task.output_files[0])
+        self.assertTrue(isinstance(ds_out, AlignmentSet),
+                        type(ds_out).__name__)
 
-#@unittest.skipUnless(os.path.isdir(DATA2))
-@unittest.skip("disabled pending fix for blasr bug 27470")
+
+@unittest.skipUnless(os.path.isdir(DATA2), "%s missing" % DATA2)
 class TestPbalignCCS(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "python -m pbalign.ccs"
     INPUT_FILES = [
@@ -36,6 +40,7 @@ class TestPbalignCCS(pbcommand.testkit.PbTestApp):
         ds_out = openDataSet(rtc.task.output_files[0])
         self.assertTrue(isinstance(ds_out, ConsensusAlignmentSet),
                         type(ds_out).__name__)
+
 
 if __name__ == "__main__":
     unittest.main()
