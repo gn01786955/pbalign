@@ -606,6 +606,6 @@ def resolved_tool_contract_to_args(resolved_tool_contract):
         ])
     if rtc.task.options[Constants.CONCORDANT_ID]:
         args.append("--concordant")
-    if rtc.task.options[Constants.USECCS_ID]:
+    if not str(rtc.task.options[Constants.USECCS_ID]) in ["None", ""]:
         args.extend([ "--useccs", rtc.task.options[Constants.USECCS_ID] ])
     return p.parse_args(args)
