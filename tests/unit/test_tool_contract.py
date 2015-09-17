@@ -7,6 +7,7 @@ from pbcore.io import AlignmentSet, ConsensusAlignmentSet, openDataSet
 
 DATA_DIR = "/mnt/secondary-siv/testdata/SA3-RS"
 DATA2 = "/mnt/secondary-siv/testdata/pbalign-unittest2/data"
+DATA3 = "/mnt/secondary-siv/testdata/pbsmrtpipe-unittest/data/chunk"
 REF_DIR = "/mnt/secondary-siv/references"
 
 @unittest.skipUnless(os.path.isdir(DATA_DIR), "%s missing" % DATA_DIR)
@@ -40,6 +41,32 @@ class TestPbalignCCS(pbcommand.testkit.PbTestApp):
         ds_out = openDataSet(rtc.task.output_files[0])
         self.assertTrue(isinstance(ds_out, ConsensusAlignmentSet),
                         type(ds_out).__name__)
+
+
+@unittest.skipUnless(os.path.isdir(DATA3), "%s missing" % DATA3)
+class TestConsolidateBam(pbcommand.testkit.PbTestApp):
+    DRIVER_BASE = "python -m pbalign.tasks.consolidate_bam"
+    INPUT_FILES = [
+        os.path.join(DATA3, "aligned_multi_bam.alignmentset.xml"),
+    ]
+    TASK_OPTIONS = {
+        "pbalign.task_options.consolidate_aligned_bam": True,
+    }
+
+    def run_after(self, rtc, output_dir):
+        with AlignmentSet(rtc.task.output_files[0]) as f:
+            self.assertEqual(len(f.toExternalFiles()), 1)
+
+
+@unittest.skipUnless(os.path.isdir(DATA3), "%s missing" % DATA3)
+class TestConsolidateBamDisabled(TestConsolidateBam):
+    TASK_OPTIONS = {
+        "pbalign.task_options.consolidate_aligned_bam": False,
+    }
+
+    def run_after(self, rtc, output_dir):
+        with AlignmentSet(rtc.task.output_files[0]) as f:
+            self.assertEqual(len(f.toExternalFiles()), 2)
 
 
 if __name__ == "__main__":
