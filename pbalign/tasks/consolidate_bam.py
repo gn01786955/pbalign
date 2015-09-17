@@ -30,7 +30,7 @@ def get_parser():
                      "AlignmentSet consolidate",
                      __doc__,
                      Constants.DRIVER,
-                     is_distributed=False)
+                     is_distributed=True)
 
     p.add_input_file_type(FileTypes.DS_ALIGN, "align_in", "Input AlignmentSet",
                           "Gathered AlignmentSet to consolidate")
