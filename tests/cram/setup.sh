@@ -12,7 +12,7 @@ SIVDIR=/mnt/secondary-siv/testdata/pbalign-unittest
 DATSIVDIR=$SIVDIR/data/
 STDSIVDIR=$SIVDIR/stdout/
 
-TESTDATASETS=/mnt/secondary-siv/testdata/SA3-RS
+TESTDATASETS=/mnt/secondary-siv/testdata/SA3-DS
 REFDIR=/mnt/secondary-siv/references
 
 TMP1=$$.tmp.out

@@ -5,7 +5,7 @@ import os.path
 import pbcommand.testkit
 from pbcore.io import AlignmentSet, ConsensusAlignmentSet, openDataSet
 
-DATA_DIR = "/mnt/secondary-siv/testdata/SA3-RS"
+DATA_DIR = "/mnt/secondary-siv/testdata/SA3-DS"
 DATA2 = "/mnt/secondary-siv/testdata/pbalign-unittest2/data"
 DATA3 = "/mnt/secondary-siv/testdata/pbsmrtpipe-unittest/data/chunk"
 REF_DIR = "/mnt/secondary-siv/references"
@@ -16,7 +16,8 @@ class TestPbalign(pbcommand.testkit.PbTestApp):
     REQUIRES_PBCORE = True
     INPUT_FILES = [
         os.path.join(DATA_DIR, "lambda", "2372215", "0007_tiny",
-        "m150404_101626_42267_c100807920800000001823174110291514_s1_p0.subread.xml"),
+        "Analysis_Results",
+        "m150404_101626_42267_c100807920800000001823174110291514_s1_p0.all.subreadset.xml"),
         os.path.join(REF_DIR, "lambda", "reference.dataset.xml"),
     ]
     TASK_OPTIONS = {
@@ -55,6 +56,7 @@ class TestConsolidateBam(pbcommand.testkit.PbTestApp):
 
     def run_after(self, rtc, output_dir):
         with AlignmentSet(rtc.task.output_files[0]) as f:
+            f.assertIndexed()
             self.assertEqual(len(f.toExternalFiles()), 1)
 
 
