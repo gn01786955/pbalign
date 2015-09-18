@@ -1,6 +1,9 @@
 
+import subprocess
+import tempfile
 import unittest
 import os.path
+import sys
 
 import pbcommand.testkit
 from pbcore.io import AlignmentSet, ConsensusAlignmentSet, openDataSet
@@ -44,7 +47,19 @@ class TestPbalignCCS(pbcommand.testkit.PbTestApp):
                         type(ds_out).__name__)
 
 
-@unittest.skipUnless(os.path.isdir(DATA3), "%s missing" % DATA3)
+HAVE_BAMTOOLS = False
+try:
+    with tempfile.TemporaryFile() as O, \
+         tempfile.TemporaryFile() as E:
+        assert subprocess.call(["bamtools", "--help"], stdout=O, stderr=E) == 0
+except Exception as e:
+    sys.stderr.write(str(e)+"\n")
+    sys.stderr.write("bamtools missing, skipping test\n")
+else:
+    HAVE_BAMTOOLS = True
+
+@unittest.skipUnless(HAVE_BAMTOOLS and os.path.isdir(DATA3),
+                     "bamtools or %s missing" % DATA3)
 class TestConsolidateBam(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "python -m pbalign.tasks.consolidate_bam"
     INPUT_FILES = [
@@ -60,7 +75,8 @@ class TestConsolidateBam(pbcommand.testkit.PbTestApp):
             self.assertEqual(len(f.toExternalFiles()), 1)
 
 
-@unittest.skipUnless(os.path.isdir(DATA3), "%s missing" % DATA3)
+@unittest.skipUnless(HAVE_BAMTOOLS and os.path.isdir(DATA3),
+                     "bamtools or %s missing" % DATA3)
 class TestConsolidateBamDisabled(TestConsolidateBam):
     TASK_OPTIONS = {
         "pbalign.task_options.consolidate_aligned_bam": False,
