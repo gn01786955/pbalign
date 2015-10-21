@@ -181,13 +181,6 @@ def getFileFormatsFromFOFN(fofnname):
     fs = getFilesFromFOFN(fofnname)
     return [getFileFormat(f) for f in fs]
 
-
-def XmlToFofn(xmlfile, fofnfile):
-    """
-    Extract datasets in xml file to a fofn.
-    """
-    DataSet(xmlfile).toFofn(outfn=fofnfile, uri=False)
-
 def checkInputFile(filename, validFormats=VALID_INPUT_FORMATS):
     """
     Check whether an input file has the valid file format and exists.
@@ -222,11 +215,6 @@ def checkInputFile(filename, validFormats=VALID_INPUT_FORMATS):
             else:
                 fileListRet.append(f)
 
-    if getFileFormat(filename) ==  FILE_FORMATS.XML:
-        import tempfile
-        tmpFile = op.join(tempfile.mkdtemp(), "input.fofn")
-        XmlToFofn(filename, tmpFile)
-        filename = tmpFile
     return real_upath(filename)
 
 
