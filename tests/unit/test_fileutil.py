@@ -5,7 +5,8 @@ from os import path
 from pbalign.utils.fileutil import getFileFormat, \
     isValidInputFormat, isValidOutputFormat, getFilesFromFOFN, \
     checkInputFile, checkOutputFile, checkReferencePath, \
-    real_upath, real_ppath, isExist, XmlToFofn
+    real_upath, real_ppath, isExist
+from pbcore.io import DataSet
 import filecmp
 from test_setpath import ROOT_DIR, OUT_DIR, DATA_DIR
 
@@ -53,20 +54,6 @@ class Test_fileutil(unittest.TestCase):
                "m121215_065521_richard_c100425710150000001823055001121371_s2_p0.pls.h5"]
         self.assertEqual(fns, getFilesFromFOFN(fofnFN))
 
-    def test_XmlToFofn(self):
-        """Test XmlToFofn."""
-        xmlFN = path.join(self.rootDir,  "data/subreads_dataset1.xml")
-        fofnFN = path.join(self.rootDir, "out/subreads_dataset1.fofn")
-        stdfofnFN = "/mnt/secondary-siv/testdata/pbalign-unittest/stdout/subreads_dataset1.fofn"
-        XmlToFofn(xmlFN, fofnFN)
-        self.assertTrue(filecmp.cmp(fofnFN, stdfofnFN))
-
-        xmlFN = path.join(self.rootDir,  "data/subreads_dataset2.xml")
-        fofnFN = path.join(self.rootDir, "out/subreads_dataset2.fofn")
-        stdfofnFN = "/mnt/secondary-siv/testdata/pbalign-unittest/stdout/subreads_dataset2.fofn"
-        XmlToFofn(xmlFN, fofnFN)
-        self.assertTrue(filecmp.cmp(fofnFN, stdfofnFN))
-
     def test_checkInputFile(self):
         """Test checkInputFile()."""
         fastaFN = path.join(self.rootDir,  "data/ecoli.fasta")
@@ -80,8 +67,8 @@ class Test_fileutil(unittest.TestCase):
 
         xmlFN = path.join(self.rootDir,  "data/subreads_dataset1.xml")
         ret = checkInputFile(xmlFN)
-        self.assertTrue(ret.endswith('.fofn'))
-        fs = [l.strip() for l in open(ret, 'r')]
+        self.assertTrue(ret.endswith('.xml'))
+        fs = DataSet(ret).toExternalFiles()
         self.assertTrue(fs[0].endswith("m140905_042212_sidney_c100564852550000001823085912221377_s1_X0.1.subreads.bam"))
         self.assertTrue(fs[1].endswith("m130406_011850_42141_c100513442550000001823074308221310_s1_p0.1.subreads.bam"))
 
