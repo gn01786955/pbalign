@@ -50,7 +50,7 @@ class Constants(object):
     OUTPUT_FILE_TYPE = FileTypes.DS_ALIGN
     OUTPUT_FILE_NAME = "aligned.subreads.xml"
     ALGORITHM_OPTIONS_ID = "pbalign.task_options.algorithm_options"
-    ALGORITHM_OPTIONS_DEFAULT = "-useQuality -minMatch 12 -bestn 10 -minPctIdentity 70.0"
+    ALGORITHM_OPTIONS_DEFAULT = "-useQuality -minMatch 12 -bestn 10 -minPctSimilarity 70.0"
     MIN_ACCURACY_ID = "pbalign.task_options.min_accuracy"
     MIN_LENGTH_ID = "pbalign.task_options.min_length"
     CONCORDANT_ID = "pbalign.task_options.concordant"
@@ -242,7 +242,7 @@ def constructOptionParser(parser, C=Constants):
     tcp.add_str(C.ALGORITHM_OPTIONS_ID, "algorithmOptions",
         default=C.ALGORITHM_OPTIONS_DEFAULT,
         name="Algorithm options",
-        description="List of space-separated arguments passed to BLASR (etc.)")
+        description="List of space-separated arguments passed to BLASR")
 
     # Filtering criteria and hit policy.
     filter_group = parser.add_argument_group("Filter criteria options")
