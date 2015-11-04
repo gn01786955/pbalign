@@ -54,8 +54,6 @@ class Constants(object):
     MIN_ACCURACY_ID = "pbalign.task_options.min_accuracy"
     MIN_LENGTH_ID = "pbalign.task_options.min_length"
     CONCORDANT_ID = "pbalign.task_options.concordant"
-    USECCS_ID = "pbalign.task_options.useccs"
-    USECCS_DEFAULT = ""
     HIT_POLICY_ID = "pbalign.task_options.hit_policy"
     DRIVER_EXE = "pbalign --resolved-tool-contract "
     VERSION = "3.0"
@@ -196,10 +194,6 @@ def constructOptionParser(parser, C=Constants):
                         action="store",
                         default=None,
                         help=helpstr)
-    tcp.add_str(C.USECCS_ID, "useccs",
-        default=C.USECCS_DEFAULT,
-        name="Use CCS",
-        description=helpstr)
 
     helpstr = "Do not split reads into subreads even if subread \n" + \
               "regions are available. Default value is {0}."\
@@ -606,6 +600,4 @@ def resolved_tool_contract_to_args(resolved_tool_contract):
         ])
     if rtc.task.options[Constants.CONCORDANT_ID]:
         args.append("--concordant")
-    if not str(rtc.task.options[Constants.USECCS_ID]) in ["None", ""]:
-        args.extend([ "--useccs", rtc.task.options[Constants.USECCS_ID] ])
     return p.parse_args(args)

@@ -19,7 +19,6 @@ class Constants(pbalign.options.Constants):
     OUTPUT_FILE_NAME = "aligned.ccs.xml"
     # some modified defaults
     ALGORITHM_OPTIONS_DEFAULT = "-minMatch 12 -bestn 1 -minPctSimilarity 70.0"
-    USECCS_DEFAULT = "useccsdenovo"
 
 def get_parser():
     return pbalign.options.get_contract_parser(Constants)
