@@ -22,7 +22,7 @@ class Test_FilterService(unittest.TestCase):
         self.testDir = ROOT_DIR
         self.alignedSam    = path.join(self.testDir,
                                        "data/lambda.sam")
-        self.targetFileName = "/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+        self.targetFileName = "/pbi/dept/secondary/siv/references/lambda/sequence/lambda.fasta"
         self.filteredSam   = path.join(OUT_DIR,
                                        "lambda_filtered.sam")
 

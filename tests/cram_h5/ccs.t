@@ -3,7 +3,7 @@ Set up
 
 #Test --useccs=useccsdenovo, whether attribute /ReadType is 'CCS'
   $ Q=$DATDIR/lambda_bax.fofn
-  $ T="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+  $ T="/pbi/dept/secondary/siv/references/lambda/sequence/lambda.fasta"
   $ CMPOUT=$OUTDIR/lambda_denovo.cmp.h5
 
   $ rm -f $CMPOUT
@@ -18,7 +18,7 @@ Set up
 
 #Test whether pbalign can produce sam output for non-PacBio reads
 #  $ Q=$DATDIR/notSMRT.fasta
-#  $ T="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+#  $ T="/pbi/dept/secondary/siv/references/lambda/sequence/lambda.fasta"
 #  $ SAMOUT=$OUTDIR/notSMRT.sam
 #
 #  $ rm -f $SAMOUT $CMPOUT
@@ -28,7 +28,7 @@ Set up
 # Test whether (ccs.h5) produces
 # identical results as (bas.h5 and --useccs=useccsdenovo).
   $ Q=$DATDIR/test_ccs.fofn 
-  $ T=/mnt/secondary-siv/references/ecoli_k12_MG1655/sequence/ecoli_k12_MG1655.fasta
+  $ T=/pbi/dept/secondary/siv/references/ecoli_k12_MG1655/sequence/ecoli_k12_MG1655.fasta
   $ CCS_CMPOUT=$OUTDIR/test_ccs.cmp.h5
 
   $ rm -f $CCS_CMPOUT

@@ -3,7 +3,7 @@ Set up
 
 ##Test --maxDivergence --minAnchorSize --minAccuracy 
 #  $ Q=$DATDIR/lambda_query.fasta
-#  $ T="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+#  $ T="/pbi/dept/secondary/siv/references/lambda/sequence/lambda.fasta"
 #
 #  $ NAME=lambda5
 #  $ SAMOUT=$OUTDIR/$NAME.sam

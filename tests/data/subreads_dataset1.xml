@@ -1,16 +1,16 @@
 <?xml version="1.0" ?>
 <AlignmentSet CreatedAt="2015-07-16T11:35:50" MetaType="PacBio.DataSet.AlignmentSet" Name="" Tags="" UniqueId="2e8eaedb-0928-2310-bffd-6d3b36062e53" Version="2.3.0" xmlns="http://pacificbiosciences.com/PacBioDataModel.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pacificbiosciences.com/PacBioDataModel.xsd">
 	<ExternalResources>
-		<ExternalResource MetaType="PacBio.SubreadFile.SubreadBamFile" ResourceId="/mnt/secondary-siv/testdata/BlasrTestData/ctest/data/test_bam/m140905_042212_sidney_c100564852550000001823085912221377_s1_X0.1.subreads.bam">
+		<ExternalResource MetaType="PacBio.SubreadFile.SubreadBamFile" ResourceId="/pbi/dept/secondary/siv/testdata/BlasrTestData/ctest/data/test_bam/m140905_042212_sidney_c100564852550000001823085912221377_s1_X0.1.subreads.bam">
 			<FileIndices>
-				<FileIndex MetaType="PacBio.Index.PacBioIndex" ResourceId="/mnt/secondary-siv/testdata/BlasrTestData/ctest/data/test_bam/m140905_042212_sidney_c100564852550000001823085912221377_s1_X0.1.subreads.bam.pbi"/>
-				<FileIndex MetaType="PacBio.Index.BamIndex" ResourceId="/mnt/secondary-siv/testdata/BlasrTestData/ctest/data/test_bam/m140905_042212_sidney_c100564852550000001823085912221377_s1_X0.1.subreads.bam.bai"/>
+				<FileIndex MetaType="PacBio.Index.PacBioIndex" ResourceId="/pbi/dept/secondary/siv/testdata/BlasrTestData/ctest/data/test_bam/m140905_042212_sidney_c100564852550000001823085912221377_s1_X0.1.subreads.bam.pbi"/>
+				<FileIndex MetaType="PacBio.Index.BamIndex" ResourceId="/pbi/dept/secondary/siv/testdata/BlasrTestData/ctest/data/test_bam/m140905_042212_sidney_c100564852550000001823085912221377_s1_X0.1.subreads.bam.bai"/>
 			</FileIndices>
 		</ExternalResource>
-		<ExternalResource MetaType="PacBio.SubreadFile.SubreadBamFile" ResourceId="/mnt/secondary-siv/testdata/BlasrTestData/ctest/data/test_bam/m130406_011850_42141_c100513442550000001823074308221310_s1_p0.1.subreads.bam">
+		<ExternalResource MetaType="PacBio.SubreadFile.SubreadBamFile" ResourceId="/pbi/dept/secondary/siv/testdata/BlasrTestData/ctest/data/test_bam/m130406_011850_42141_c100513442550000001823074308221310_s1_p0.1.subreads.bam">
 			<FileIndices>
-				<FileIndex MetaType="PacBio.Index.PacBioIndex" ResourceId="/mnt/secondary-siv/testdata/BlasrTestData/ctest/data/test_bam/m130406_011850_42141_c100513442550000001823074308221310_s1_p0.1.subreads.bam.pbi"/>
-				<FileIndex MetaType="PacBio.Index.BamIndex" ResourceId="/mnt/secondary-siv/testdata/BlasrTestData/ctest/data/test_bam/m130406_011850_42141_c100513442550000001823074308221310_s1_p0.1.subreads.bam.bai"/>
+				<FileIndex MetaType="PacBio.Index.PacBioIndex" ResourceId="/pbi/dept/secondary/siv/testdata/BlasrTestData/ctest/data/test_bam/m130406_011850_42141_c100513442550000001823074308221310_s1_p0.1.subreads.bam.pbi"/>
+				<FileIndex MetaType="PacBio.Index.BamIndex" ResourceId="/pbi/dept/secondary/siv/testdata/BlasrTestData/ctest/data/test_bam/m130406_011850_42141_c100513442550000001823074308221310_s1_p0.1.subreads.bam.bai"/>
 			</FileIndices>
 		</ExternalResource>
 	</ExternalResources>

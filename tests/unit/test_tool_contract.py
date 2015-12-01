@@ -8,10 +8,10 @@ import sys
 import pbcommand.testkit
 from pbcore.io import AlignmentSet, ConsensusAlignmentSet, openDataSet
 
-DATA_DIR = "/mnt/secondary-siv/testdata/SA3-DS"
-DATA2 = "/mnt/secondary-siv/testdata/pbalign-unittest2/data"
-DATA3 = "/mnt/secondary-siv/testdata/pbsmrtpipe-unittest/data/chunk"
-REF_DIR = "/mnt/secondary-siv/references"
+DATA_DIR = "/pbi/dept/secondary/siv/testdata/SA3-DS"
+DATA2 = "/pbi/dept/secondary/siv/testdata/pbalign-unittest2/data"
+DATA3 = "/pbi/dept/secondary/siv/testdata/pbsmrtpipe-unittest/data/chunk"
+REF_DIR = "/pbi/dept/secondary/siv/references"
 
 @unittest.skipUnless(os.path.isdir(DATA_DIR), "%s missing" % DATA_DIR)
 class TestPbalign(pbcommand.testkit.PbTestApp):

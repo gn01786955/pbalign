@@ -8,7 +8,7 @@ class Test_PbAlignFiles_Ecoli(unittest.TestCase):
     def setUp(self):
         self.rootDir = ROOT_DIR
         self.inputFileName    = path.join(self.rootDir, "data/ecoli.fasta")
-        self.referencePath    = "/mnt/secondary-siv/references/ecoli_k12_MG1655/"
+        self.referencePath    = "/pbi/dept/secondary/siv/references/ecoli_k12_MG1655/"
         self.targetFileName   = path.join(self.referencePath,
                                           "sequence/ecoli_k12_MG1655.fasta")
         self.sawriterFileName = self.targetFileName + ".sa"
@@ -32,7 +32,7 @@ class Test_PbAlignFiles(unittest.TestCase):
     def setUp(self):
         self.rootDir = ROOT_DIR
         self.inputFileName = path.join(self.rootDir, "data/lambda_bax.fofn")
-        self.referenceFile = "/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+        self.referenceFile = "/pbi/dept/secondary/siv/references/lambda/sequence/lambda.fasta"
         self.outputFileName = path.join(OUT_DIR, "tmp.sam")
 
     def test_init(self):

@@ -83,7 +83,7 @@ class Test_fileutil(unittest.TestCase):
 
     def test_checkReferencePath(self):
         """Test checkReferencePath()."""
-        refDir = "/mnt/secondary-siv/references/"
+        refDir = "/pbi/dept/secondary/siv/references/"
         refPath = path.join(refDir, "lambda")
         refPath, refFastaOut, refSaOut, isWithinRepository, annotation = \
             checkReferencePath(refPath)
@@ -124,7 +124,7 @@ class Test_fileutil(unittest.TestCase):
         refpath, refFastaOut, refSaOut, isWithinRepository, annotation = \
                 checkReferencePath(xmlFN)
         self.assertTrue(filecmp.cmp(refFastaOut,
-            "/mnt/secondary-siv/testdata/pbalign-unittest/data/lambda_ref.fasta"))
+            "/pbi/dept/secondary/siv/testdata/pbalign-unittest/data/lambda_ref.fasta"))
 
     def test_isExist(self):
         """Test isExist(ff)."""

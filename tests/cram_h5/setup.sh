@@ -8,12 +8,12 @@ CURDIR=$TESTDIR
 DATDIR=$CURDIR/../data
 OUTDIR=$CURDIR/../out
 STDDIR=$CURDIR/../stdout
-SIVDIR=/mnt/secondary-siv/testdata/pbalign-unittest
+SIVDIR=/pbi/dept/secondary/siv/testdata/pbalign-unittest
 DATSIVDIR=$SIVDIR/data/
 STDSIVDIR=$SIVDIR/stdout/
 
-TESTDATASETS=/mnt/secondary-siv/testdata/SA3-RS
-REFDIR=/mnt/secondary-siv/references
+TESTDATASETS=/pbi/dept/secondary/siv/testdata/SA3-RS
+REFDIR=/pbi/dept/secondary/siv/references
 
 TMP1=$$.tmp.out
 TMP2=$$.tmp.stdout

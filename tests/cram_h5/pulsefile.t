@@ -7,15 +7,15 @@ Set up
 # file instead, while keep the ability of generating cmp.h5 files with pulses 
 # (i.e., --forQuiver).
   $ O=$OUTDIR/test_pulseFile.cmp.h5
-  $ T=/mnt/secondary-siv/references/Ecoli_K12_DH10B/
-  $ T=/mnt/secondary-siv/references/Ecoli_K12_DH10B/sequence/Ecoli_K12_DH10B.fasta
+  $ T=/pbi/dept/secondary/siv/references/Ecoli_K12_DH10B/
+  $ T=/pbi/dept/secondary/siv/references/Ecoli_K12_DH10B/sequence/Ecoli_K12_DH10B.fasta
   $ pbalign $DATDIR/test_pulseFile.fasta $T $O --pulseFile $DATDIR/test_pulseFile.fofn --forQuiver --algorithm gmap --byread 2>/dev/null
   $ echo $?
   0
 
   $ O=$OUTDIR/test_pulseFile.cmp.h5
-  $ T=/mnt/secondary-siv/references/Ecoli_K12_DH10B/
-  $ T=/mnt/secondary-siv/references/Ecoli_K12_DH10B/sequence/Ecoli_K12_DH10B.fasta
+  $ T=/pbi/dept/secondary/siv/references/Ecoli_K12_DH10B/
+  $ T=/pbi/dept/secondary/siv/references/Ecoli_K12_DH10B/sequence/Ecoli_K12_DH10B.fasta
   $ rm -f $O
   $ pbalign $DATDIR/test_pulseFile.fasta $T $O --pulseFile $DATDIR/test_pulseFile.fofn --forQuiver --algorithm blasr --byread 2>/dev/null
   $ echo $?

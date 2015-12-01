@@ -7,7 +7,7 @@ class Test_PBAlignRunner(unittest.TestCase):
     def setUp(self):
         self.rootDir = ROOT_DIR
         self.queryFile = path.join(self.rootDir, "data/lambda_query.fasta")
-        self.referenceFile = "/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+        self.referenceFile = "/pbi/dept/secondary/siv/references/lambda/sequence/lambda.fasta"
         self.configFile = path.join(self.rootDir, "data/1.config")
         self.samOut = path.join(OUT_DIR, "lambda_out.sam")
         self.cmph5Out = path.join(OUT_DIR, "lambda_out.cmp.h5")

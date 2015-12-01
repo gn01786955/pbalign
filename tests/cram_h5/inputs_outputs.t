@@ -4,7 +4,7 @@ Set up
 #Test pbalign with all combinations of input & output formats
 #input, reference and output formats are: fasta, fasta, and sam/cmp.h5
   $ Q=$DATDIR/lambda_query.fasta
-  $ T="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+  $ T="/pbi/dept/secondary/siv/references/lambda/sequence/lambda.fasta"
 
   $ NAME=lambda
   $ SAMOUT=$OUTDIR/$NAME.sam
@@ -35,7 +35,7 @@ Set up
  
 #input, reference and output formats are: fasta, folder and sam/cmp.h5
   $ Q=$DATDIR/lambda_query.fasta
-  $ T=/mnt/secondary-siv/references/lambda/
+  $ T=/pbi/dept/secondary/siv/references/lambda/
 
   $ NAME=lambda2
   $ SAMOUT=$OUTDIR/$NAME.sam
@@ -67,7 +67,7 @@ Set up
 
 #input, reference and output formats are: fofn, fasta and sam/cmp.h5
   $ Q=$DATDIR/lambda_bax.fofn
-  $ T="/mnt/secondary-siv/references/lambda/sequence/lambda.fasta"
+  $ T="/pbi/dept/secondary/siv/references/lambda/sequence/lambda.fasta"
 
   $ NAME=lambda3
   $ SAMOUT=$OUTDIR/$NAME.sam
@@ -99,7 +99,7 @@ Set up
 
 #input, reference and output formats are: fofn, folder and sam/cmp.h5
   $ Q=$DATDIR/lambda_bax.fofn
-  $ T=/mnt/secondary-siv/references/lambda/
+  $ T=/pbi/dept/secondary/siv/references/lambda/
 
   $ NAME=lambda4
   $ SAMOUT=$OUTDIR/$NAME.sam

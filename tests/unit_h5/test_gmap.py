@@ -18,7 +18,7 @@ class Test_GMAPService(unittest.TestCase):
         self.dataDir = path.join(self.rootDir, "data/")
         self.queryFofn = path.join(self.dataDir, "ecoli_lp.fofn")
         self.refFa = path.join(self.dataDir, "ecoli.fasta")
-        self.repoPath = "/mnt/secondary-siv/references/ecoli/"
+        self.repoPath = "/pbi/dept/secondary/siv/references/ecoli/"
 
     def test_gmapCreateDB_case1(self):
         """Test _gmapCreateDB(refFile, isWithinRepository, tempRootDir).

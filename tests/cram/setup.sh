@@ -8,15 +8,14 @@ CURDIR=$TESTDIR
 DATDIR=$CURDIR/../data
 OUTDIR=$CURDIR/../out
 STDDIR=$CURDIR/../stdout
-SIVDIR=/mnt/secondary-siv/testdata/pbalign-unittest
+SIVDIR=/pbi/dept/secondary/siv/testdata/pbalign-unittest
 DATSIVDIR=$SIVDIR/data/
 STDSIVDIR=$SIVDIR/stdout/
 
-TESTDATASETS=/mnt/secondary-siv/testdata/SA3-DS
-REFDIR=/mnt/secondary-siv/references
+TESTDATASETS=/pbi/dept/secondary/siv/testdata/SA3-DS
+REFDIR=/pbi/dept/secondary/siv/references
 
 TMP1=$$.tmp.out
 TMP2=$$.tmp.stdout
 SAMTOM4=samtom4
 CMPH5TOOLS="/mnt/secondary/Smrtanalysis/smrtcmds/bin/smrtwrap cmph5tools.py "
-

@@ -1,9 +1,9 @@
 <?xml version="1.0" ?>
 <ReferenceSet CreatedAt="2015-07-16T10:48:02" MetaType="PacBio.DataSet.ReferenceSet" Name="" Tags="" UniqueId="1078368a-d5c5-433b-82b9-38ae124259c5" Version="2.3.0" xmlns="http://pacificbiosciences.com/PacBioDataModel.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pacificbiosciences.com/PacBioDataModel.xsd">
 	<ExternalResources>
-		<ExternalResource MetaType="PacBio.ReferenceFile.ReferenceFastaFile" ResourceId="/mnt/secondary-siv/references/lambdaNEB/sequence/lambdaNEB.fasta">
+		<ExternalResource MetaType="PacBio.ReferenceFile.ReferenceFastaFile" ResourceId="/pbi/dept/secondary/siv/references/lambdaNEB/sequence/lambdaNEB.fasta">
 			<FileIndices>
-				<FileIndex MetaType="PacBio.Index.SamIndex" ResourceId="/mnt/secondary-siv/references/lambdaNEB/sequence/lambdaNEB.fasta.fai"/>
+				<FileIndex MetaType="PacBio.Index.SamIndex" ResourceId="/pbi/dept/secondary/siv/references/lambdaNEB/sequence/lambdaNEB.fasta.fai"/>
 			</FileIndices>
 		</ExternalResource>
 	</ExternalResources>
