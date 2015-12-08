@@ -195,6 +195,15 @@ class BlasrService(AlignService):
             logging.error(errMsg + str(e))
             raise ValueError(errMsg + str(e))
 
+        # Existing suffix array always uses match size 8.
+        # When BLASR search option -minMatch is less than 8, suffix array needs
+        # to be created on the fly.
+        if (options.minAnchorSize is not None and options.minAnchorSize != "" and
+            int(options.minAnchorSize) < 8):
+            logging.warning("Suffix array must be recreated on the fly when " +
+                            "minMatch < 8, which may take a long time.")
+            fileNames.sawriterFileName = None
+
         # Update algorithmOptions when resolve is done
         options.algorithmOptions = " ".join(items)
         return options
