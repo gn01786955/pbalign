@@ -61,7 +61,7 @@ Set up
   $ SAMOUT=$OUTDIR/hitPolicy_allbest.sam
 
   $ rm -f $SAMOUT
-  $ pbalign --hitPolicy allbest $Q $T $SAMOUT 2>/dev/null
+  $ pbalign --hitPolicy allbest $Q $T $SAMOUT >/dev/null
 
 
 
@@ -69,7 +69,7 @@ Set up
   $ Q=$DATDIR/test_leftmost_query.fasta
   $ T=$DATDIR/test_leftmost_target.fasta
   $ O=$OUTDIR/test_leftmost_out.sam 
-  $ pbalign $Q $T $O --hitPolicy leftmost 2>/dev/null
+  $ pbalign $Q $T $O --hitPolicy leftmost >/dev/null
   $ echo $?
   0
   $ grep -v '@' $O | cut -f 4 
