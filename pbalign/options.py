@@ -106,7 +106,7 @@ DEFAULT_OPTIONS = {"regionTable": None,
                    # Miscellaneous options
                    "nproc": 8,
                    "seed": 1,
-                   "tmpDir": "/scratch"}
+                   "tmpDir": "/tmp"}
 
 def constructOptionParser(parser, C=Constants):
     """
@@ -513,24 +513,24 @@ class _ArgParser(argparse.ArgumentParser):
     def parse_args(self, args=None, namespace=None):
         options = super(_ArgParser, self).parse_args(args=args,
             namespace=namespace)
-    
+
         # Import options from the specified config file, if it exists.
         configOptions, infoMsg = importConfigOptions(options)
-    
+
         # Parse argumentList for the second time in order to
         # overwrite config options with options in argumentList.
         newOptions = copy(configOptions)
         newOptions.algorithmOptions = None
         newOptions = super(_ArgParser, self).parse_args(namespace=newOptions,
             args=args)
-    
+
         # Overwrite config algorithmOptions if it is specified in argumentList
         if newOptions.algorithmOptions is None:
             if configOptions.algorithmOptions is not None:
                 newOptions.algorithmOptions = configOptions.algorithmOptions
         else:
             newOptions.algorithmOptions = \
-                " ".join(newOptions.algorithmOptions)   
+                " ".join(newOptions.algorithmOptions)
 
         # FIXME gross hack to work around the problem of passing this
         # parameter from a resolved tool contract
@@ -540,7 +540,7 @@ class _ArgParser(argparse.ArgumentParser):
             return s
         if newOptions.algorithmOptions is not None:
             newOptions.algorithmOptions = unquote(newOptions.algorithmOptions)
- 
+
         # Return the updated options and an info message.
         return newOptions #parser, newOptions, infoMsg
 
