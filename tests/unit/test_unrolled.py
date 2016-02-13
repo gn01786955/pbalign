@@ -17,7 +17,6 @@ REFERENCE = "/mnt/secondary/iSmrtanalysis/install/smrtanalysis_2.4.0.140820/comm
 BASE_ARGS = [
     "pbalign",
     "--nproc", "8",
-    "--noSplitSubreads",
     "--hitPolicy=leftmost",
     "--algorithmOptions", "-bestn 1 -forwardOnly -fastMaxInterval -maxAnchorsPerPosition 30000 -ignoreHQRegions -minPctIdentity 60",
 ]
@@ -47,10 +46,10 @@ class TestUnrolledBAM(unittest.TestCase):
         ]
         self._run_args(args, aln_file)
 
-    @unittest.skip("DELIBERATELY FAILING WITH CURRENT CODE")
     def test_subreadset(self):
         aln_file = tempfile.NamedTemporaryFile(suffix=".unrolled.bam").name
         args = BASE_ARGS + [
+            "--noSplitSubreads",
             op.join(DATA, "m54006_151021_185942.subreadset.xml"),
             REFERENCE,
             aln_file,
