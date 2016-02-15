@@ -13,7 +13,7 @@ import os.path as op
 from pbcore.io import AlignmentSet
 
 DATA = "/pbi/dept/secondary/siv/testdata/pbalign-unittest/data/unrolled"
-REFERENCE = "/mnt/secondary/iSmrtanalysis/install/smrtanalysis_2.4.0.140820/common/references/All4mer_V2_11_V2_13_V2_15_V2_44_circular_72x_l50256/sequence/All4mer_V2_11_V2_13_V2_15_V2_44_circular_72x_l50256.fasta"
+REFERENCE = "/pbi/analysis/smrtportal/internal/userdata/references/All4mer_V2_11_V2_13_V2_15_V2_44_circular_72x_l50256/sequence/All4mer_V2_11_V2_13_V2_15_V2_44_circular_72x_l50256.fasta"
 BASE_ARGS = [
     "pbalign",
     "--nproc", "8",
