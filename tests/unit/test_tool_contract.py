@@ -7,21 +7,20 @@ import sys
 
 import pbcommand.testkit
 from pbcore.io import AlignmentSet, ConsensusAlignmentSet, openDataSet
+import pbcore.data
 
 DATA_DIR = "/pbi/dept/secondary/siv/testdata/SA3-DS"
 DATA2 = "/pbi/dept/secondary/siv/testdata/pbalign-unittest2/data"
 DATA3 = "/pbi/dept/secondary/siv/testdata/pbsmrtpipe-unittest/data/chunk"
 REF_DIR = "/pbi/dept/secondary/siv/references"
 
-@unittest.skipUnless(os.path.isdir(DATA_DIR), "%s missing" % DATA_DIR)
+
 class TestPbalign(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "pbalign "
     REQUIRES_PBCORE = True
     INPUT_FILES = [
-        os.path.join(DATA_DIR, "lambda", "2372215", "0007_tiny",
-        "Analysis_Results",
-        "m150404_101626_42267_c100807920800000001823174110291514_s1_p0.all.subreadset.xml"),
-        os.path.join(REF_DIR, "lambda", "reference.dataset.xml"),
+        pbcore.data.getUnalignedBam(),
+        pbcore.data.getLambdaFasta()
     ]
     TASK_OPTIONS = {
         "pbalign.task_options.algorithm_options": "-holeNumbers 1-1000,30000-30500,60000-60600,100000-100500",
@@ -33,12 +32,11 @@ class TestPbalign(pbcommand.testkit.PbTestApp):
                         type(ds_out).__name__)
 
 
-@unittest.skipUnless(os.path.isdir(DATA2), "%s missing" % DATA2)
 class TestPbalignCCS(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "python -m pbalign.ccs"
     INPUT_FILES = [
-        os.path.join(DATA2, "dataset.ccsreads.xml"),
-        os.path.join(REF_DIR, "lambda", "reference.dataset.xml"),
+        pbcore.data.getCCSBAM(),
+        pbcore.data.getLambdaFasta()
     ]
 
     def run_after(self, rtc, output_dir):

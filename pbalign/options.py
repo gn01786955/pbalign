@@ -39,7 +39,7 @@ from copy import copy
 import json
 import sys
 
-from pbcommand.models import FileTypes, SymbolTypes, get_pbparser
+from pbcommand.models import FileTypes, SymbolTypes, ResourceTypes, get_pbparser
 from pbcommand.common_options import add_resolved_tool_contract_option, \
     add_debug_option
 
@@ -557,7 +557,8 @@ def get_contract_parser(C=Constants):
         name=C.TOOL_ID,
         description=C.PARSER_DESC,
         driver_exe=C.DRIVER_EXE,
-        nproc=SymbolTypes.MAX_NPROC)
+        nproc=SymbolTypes.MAX_NPROC,
+        resource_types=(ResourceTypes.TMP_DIR,))
     p.arg_parser.parser = _ArgParser(
         version=C.VERSION,
         description=C.PARSER_DESC,
@@ -589,6 +590,7 @@ def resolved_tool_contract_to_args(resolved_tool_contract):
         "--minAccuracy", str(rtc.task.options[Constants.MIN_ACCURACY_ID]),
         "--minLength", str(rtc.task.options[Constants.MIN_LENGTH_ID]),
         "--hitPolicy", str(rtc.task.options[Constants.HIT_POLICY_ID]),
+        "--tmpDir", rtc.task.tmpdir_resources[0].path
     ]
     if rtc.task.options[Constants.ALGORITHM_OPTIONS_ID]:
         # FIXME this is gross: if I don't quote the options, the parser chokes;
