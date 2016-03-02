@@ -86,7 +86,6 @@ class PBAlignRunner(PBToolRunner):
         # options.
         #self.args.verbosity = 1 if (self.args.verbosity is None) else \
         #    (int(self.args.verbosity) / 2 + 1)
-        self.args.verbosity = 2 if self.args.verbose else 1
         super(PBAlignRunner, self).__init__(desc)
         self._output_dataset_type = output_dataset_type
         self._alnService = None
@@ -335,11 +334,6 @@ class PBAlignRunner(PBToolRunner):
         return 0
 
 def args_runner(args, output_dataset_type=AlignmentSet):
-    log = logging.getLogger()
-    if args.verbose:
-        log.setLevel(logging.INFO)
-    else:
-        log.setLevel(logging.WARN)
     # PBAlignRunner inherits PBToolRunner. So PBAlignRunner.start() parses args,
     # sets up logging and finally returns run().
     return PBAlignRunner(args, output_dataset_type=output_dataset_type).start()
@@ -360,14 +354,12 @@ resolved_tool_contract_runner_ccs = functools.partial(
 
 def main(argv=sys.argv, get_parser_func=get_contract_parser,
          contract_runner_func=resolved_tool_contract_runner):
-    logging.basicConfig(level=logging.WARN)
-    log = logging.getLogger()
     return pbparser_runner(
         argv=argv[1:],
         parser=get_parser_func(),
         args_runner_func=args_runner,
         contract_runner_func=contract_runner_func,
-        alog=log,
+        alog=logging.getLogger(__name__),
         setup_log_func=setup_log)
 
 if __name__ == "__main__":

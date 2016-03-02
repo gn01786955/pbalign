@@ -41,7 +41,7 @@ import sys
 
 from pbcommand.models import FileTypes, SymbolTypes, ResourceTypes, get_pbparser
 from pbcommand.common_options import add_resolved_tool_contract_option, \
-    add_debug_option
+    add_debug_option, add_base_options
 
 
 class Constants(object):
@@ -118,7 +118,6 @@ def constructOptionParser(parser, C=Constants):
     parser = parser.arg_parser.parser
     #parser.argument_default = argparse.SUPPRESS
     parser.formatter_class = argparse.RawTextHelpFormatter
-    parser.add_argument("--verbose", action="store_true")
     add_debug_option(parser)
 
     # Optional input.
@@ -558,11 +557,17 @@ def get_contract_parser(C=Constants):
         description=C.PARSER_DESC,
         driver_exe=C.DRIVER_EXE,
         nproc=SymbolTypes.MAX_NPROC,
-        resource_types=(ResourceTypes.TMP_DIR,))
+        resource_types=(ResourceTypes.TMP_DIR,),
+        default_level="WARN")
     p.arg_parser.parser = _ArgParser(
-        version=C.VERSION,
         description=C.PARSER_DESC,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    p.arg_parser.parser.version = C.VERSION
+    p.arg_parser.parser.add_argument('--version',
+         action="version",
+         help="show program's version number and exit")
+    add_base_options(p.arg_parser.parser)
+
     # Required options: inputs and outputs.
     p.add_input_file_type(C.INPUT_FILE_TYPE, "inputFileName",
         "Subread DataSet", "SubreadSet or unaligned .bam")
