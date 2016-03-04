@@ -590,12 +590,12 @@ def resolved_tool_contract_to_args(resolved_tool_contract):
         rtc.task.input_files[0],
         rtc.task.input_files[1],
         rtc.task.output_files[0],
-        "--verbose",
         "--nproc", str(resolved_tool_contract.task.nproc),
         "--minAccuracy", str(rtc.task.options[Constants.MIN_ACCURACY_ID]),
         "--minLength", str(rtc.task.options[Constants.MIN_LENGTH_ID]),
         "--hitPolicy", str(rtc.task.options[Constants.HIT_POLICY_ID]),
-        "--tmpDir", rtc.task.tmpdir_resources[0].path
+        "--tmpDir", rtc.task.tmpdir_resources[0].path,
+        "--log-level", rtc.task.log_level,
     ]
     if rtc.task.options[Constants.ALGORITHM_OPTIONS_ID]:
         # FIXME this is gross: if I don't quote the options, the parser chokes;
@@ -607,4 +607,6 @@ def resolved_tool_contract_to_args(resolved_tool_contract):
         ])
     if rtc.task.options[Constants.CONCORDANT_ID]:
         args.append("--concordant")
+    logging.info("Converted command line: 'pbalign {a}'".format(
+        a=" ".join(args)))
     return p.parse_args(args)
