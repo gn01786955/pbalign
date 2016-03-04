@@ -21,7 +21,7 @@ class Constants(pbalign.options.Constants):
     ALGORITHM_OPTIONS_DEFAULT = "-minMatch 12 -bestn 1 -minPctSimilarity 70.0"
 
 def get_parser():
-    return pbalign.options.get_contract_parser(Constants)
+    return pbalign.options.get_contract_parser(Constants, ccs_mode=True)
 
 def main(argv=sys.argv):
     return pbalignrunner.main(

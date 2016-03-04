@@ -53,6 +53,7 @@ class Constants(object):
     ALGORITHM_OPTIONS_DEFAULT = "-minMatch 12 -bestn 10 -minPctSimilarity 70.0"
     MIN_ACCURACY_ID = "pbalign.task_options.min_accuracy"
     MIN_LENGTH_ID = "pbalign.task_options.min_length"
+    NO_SPLIT_ID = "pbalign.task_options.no_split_subreads"
     CONCORDANT_ID = "pbalign.task_options.concordant"
     HIT_POLICY_ID = "pbalign.task_options.hit_policy"
     DRIVER_EXE = "pbalign --resolved-tool-contract "
@@ -108,7 +109,7 @@ DEFAULT_OPTIONS = {"regionTable": None,
                    "seed": 1,
                    "tmpDir": "/tmp"}
 
-def constructOptionParser(parser, C=Constants):
+def constructOptionParser(parser, C=Constants, ccs_mode=False):
     """
     Add PBAlignRunner arguments to the parser.
     """
@@ -202,6 +203,11 @@ def constructOptionParser(parser, C=Constants):
                         default=DEFAULT_OPTIONS["noSplitSubreads"],
                         action="store_true",
                         help=helpstr)
+    if not ccs_mode:
+        tcp.add_boolean(C.NO_SPLIT_ID, "noSplitSubreads",
+            default=DEFAULT_OPTIONS["noSplitSubreads"],
+            name="Align unsplit polymerase reads",
+            description=helpstr)
 
     helpstr = "Map subreads of a ZMW to the same genomic location.\n"
     align_group.add_argument("--concordant",
@@ -209,10 +215,11 @@ def constructOptionParser(parser, C=Constants):
                         default=DEFAULT_OPTIONS["concordant"],
                         action="store_true",
                         help=helpstr)
-    tcp.add_boolean(C.CONCORDANT_ID, "concordant",
-        default=DEFAULT_OPTIONS["concordant"],
-        name="Concordant alignment",
-        description="Map subreads of a ZMW to the same genomic location")
+    if not ccs_mode:
+        tcp.add_boolean(C.CONCORDANT_ID, "concordant",
+            default=DEFAULT_OPTIONS["concordant"],
+            name="Concordant alignment",
+            description="Map subreads of a ZMW to the same genomic location")
 
     helpstr = "Number of threads. Default value is {v}."\
               .format(v=DEFAULT_OPTIONS["nproc"])
@@ -543,7 +550,7 @@ class _ArgParser(argparse.ArgumentParser):
         # Return the updated options and an info message.
         return newOptions #parser, newOptions, infoMsg
 
-def get_contract_parser(C=Constants):
+def get_contract_parser(C=Constants, ccs_mode=False):
     """
     Create and populate the combined tool contract/argument parser.  This
     method can optionally be overridden with a different Constants object for
@@ -577,7 +584,7 @@ def get_contract_parser(C=Constants):
         name="XML DataSet",
         description="Output AlignmentSet file",
         default_name=C.OUTPUT_FILE_NAME)
-    constructOptionParser(p)
+    constructOptionParser(p, ccs_mode=ccs_mode)
     p.arg_parser.parser.add_argument(
         "--profile", action="store_true",
         help="Print runtime profile at exit")
@@ -605,8 +612,10 @@ def resolved_tool_contract_to_args(resolved_tool_contract):
             "--algorithmOptions=\"%s\"" %
             rtc.task.options[Constants.ALGORITHM_OPTIONS_ID],
         ])
-    if rtc.task.options[Constants.CONCORDANT_ID]:
+    if rtc.task.options.get(Constants.CONCORDANT_ID, False):
         args.append("--concordant")
+    if rtc.task.options.get(Constants.NO_SPLIT_ID, False):
+        args.append("--noSplitSubreads")
     logging.info("Converted command line: 'pbalign {a}'".format(
         a=" ".join(args)))
     return p.parse_args(args)
