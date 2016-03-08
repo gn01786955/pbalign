@@ -16,7 +16,6 @@ class Constants(pbalign.options.Constants):
     DRIVER_EXE = "python -m pbalign.ccs --resolved-tool-contract"
     INPUT_FILE_TYPE = FileTypes.DS_CCS
     OUTPUT_FILE_TYPE = FileTypes.DS_ALIGN_CCS
-    OUTPUT_FILE_NAME = "aligned.ccs.xml"
     # some modified defaults
     ALGORITHM_OPTIONS_DEFAULT = "-minMatch 12 -bestn 1 -minPctSimilarity 70.0"
 

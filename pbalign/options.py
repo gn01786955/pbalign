@@ -48,7 +48,7 @@ class Constants(object):
     TOOL_ID = "pbalign.tasks.pbalign"
     INPUT_FILE_TYPE = FileTypes.DS_SUBREADS
     OUTPUT_FILE_TYPE = FileTypes.DS_ALIGN
-    OUTPUT_FILE_NAME = "aligned.subreads.xml"
+    OUTPUT_FILE_NAME = "mapped"
     ALGORITHM_OPTIONS_ID = "pbalign.task_options.algorithm_options"
     ALGORITHM_OPTIONS_DEFAULT = "-minMatch 12 -bestn 10 -minPctSimilarity 70.0"
     MIN_ACCURACY_ID = "pbalign.task_options.min_accuracy"

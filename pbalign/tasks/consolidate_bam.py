@@ -37,8 +37,8 @@ def get_parser():
     p.add_output_file_type(FileTypes.DS_ALIGN,
                            "ds_out",
                            "AlignmentSet",
-                           "Consolidated AlignmentSet",
-                           "final.alignmentset.xml")
+                           description="Consolidated AlignmentSet",
+                           default_name="combined")
     p.add_boolean(Constants.CONSOLIDATE_ID, "consolidate",
         default=False,
         name="Consolidate .bam",
