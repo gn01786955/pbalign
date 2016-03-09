@@ -59,7 +59,7 @@ else:
 @unittest.skipUnless(HAVE_BAMTOOLS and os.path.isdir(DATA3),
                      "bamtools or %s missing" % DATA3)
 class TestConsolidateBam(pbcommand.testkit.PbTestApp):
-    DRIVER_BASE = "python -m pbalign.tasks.consolidate_bam"
+    DRIVER_BASE = "python -m pbalign.tasks.consolidate_alignments"
     INPUT_FILES = [
         os.path.join(DATA3, "aligned_multi_bam.alignmentset.xml"),
     ]

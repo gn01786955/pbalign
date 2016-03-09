@@ -17,9 +17,9 @@ from pbcore.io import openDataSet
 
 
 class Constants(object):
-    TOOL_ID = "pbalign.tasks.consolidate_bam"
+    TOOL_ID = "pbalign.tasks.consolidate_alignments"
     VERSION = "0.1.0"
-    DRIVER = "python -m pbalign.tasks.consolidate_bam --resolved-tool-contract "
+    DRIVER = "python -m pbalign.tasks.consolidate_alignments --resolved-tool-contract "
     CONSOLIDATE_ID = "pbalign.task_options.consolidate_aligned_bam"
     N_FILES_ID = "pbalign.task_options.consolidate_n_files"
 
