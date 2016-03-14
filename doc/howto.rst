@@ -37,8 +37,7 @@ required,
 The following software is optionally required if ``--forQuiver`` option 
 will be used to convert the output Compare HDF5 file to be compatible 
 with Quiver.
-- ``pbh5tools.cmph5tools``, a PacBio Bioinformatics tools that manipulates 
-Compare HDF5 files. 
+- ``pbh5tools.cmph5tools``, a PacBio Bioinformatics tools that manipulates Compare HDF5 files. 
 - ``h5repack``, a HDF5 tool to compress and repack HDF5 files.
 
 The default aligner that pbalign uses is ``blasr``. If you want to use

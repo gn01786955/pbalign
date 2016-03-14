@@ -30,7 +30,7 @@ h5test:
 	find tests/cram_h5 -name "*.t" | xargs cram -v
 
 doc:
-	sphinx-apidoc -T -f -o doc src/ && cd doc && make html
+	sphinx-apidoc -T -f -o doc pbalign/ && cd doc && make html
 
 docs: doc
 
