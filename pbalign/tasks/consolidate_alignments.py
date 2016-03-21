@@ -56,6 +56,7 @@ def run_consolidate(dataset_file, output_file, consolidate, n_files):
         if consolidate and len(ds_in.toExternalFiles()) != 1:
             new_resource_file = op.splitext(output_file)[0] + ".bam" # .fasta?
             ds_in.consolidate(new_resource_file, numFiles=n_files)
+        ds_in.newUuid()
         ds_in.write(output_file)
     return 0
 
