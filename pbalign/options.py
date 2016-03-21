@@ -43,6 +43,8 @@ from pbcommand.models import FileTypes, SymbolTypes, ResourceTypes, get_pbparser
 from pbcommand.common_options import add_resolved_tool_contract_option, \
     add_debug_option, add_base_options
 
+log = logging.getLogger(__name__)
+
 
 class Constants(object):
     TOOL_ID = "pbalign.tasks.pbalign"
@@ -616,6 +618,5 @@ def resolved_tool_contract_to_args(resolved_tool_contract):
         args.append("--concordant")
     if rtc.task.options.get(Constants.NO_SPLIT_ID, False):
         args.append("--noSplitSubreads")
-    logging.info("Converted command line: 'pbalign {a}'".format(
-        a=" ".join(args)))
+    log.info("Converted command line: 'pbalign {a}'".format(a=" ".join(args)))
     return p.parse_args(args)
