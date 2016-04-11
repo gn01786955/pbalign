@@ -90,6 +90,7 @@ DEFAULT_OPTIONS = {"regionTable": None,
                    "minAnchorSize": 12,
                    "noSplitSubreads": False,
                    "concordant": False,
+                   "unaligned": None,
                    "algorithmOptions": None,
                    "useccs": None,
                    # Filter options
@@ -412,6 +413,14 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
 
     # Miscellaneous.
     misc_group = parser.add_argument_group("Miscellaneous options")
+    helpstr = "Output names of unaligned reads to specified file."
+    misc_group.add_argument("--unaligned",
+                            dest="unaligned",
+                            type=str,
+                            action="store",
+                            default=DEFAULT_OPTIONS["unaligned"],
+                            help=helpstr)
+
     helpstr = "Initialize the random number generator with a none-zero \n" + \
               "integer. Zero means that current system time is used.\n" + \
               "Default value is {v}.".format(v=DEFAULT_OPTIONS["seed"])

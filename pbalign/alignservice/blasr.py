@@ -166,6 +166,9 @@ class BlasrService(AlignService):
                             .format(v=item, u=options.useccs)
                     else:
                         options.useccs = val
+                elif item == "-unaligned":
+                    val = str(items[i+1])
+                    options.unaligned = val
                 elif item == "-seed" or item == "-randomSeed":
                     val = int(items[i+1])
                     if options.seed is None or int(options.seed) != val:
@@ -291,6 +294,9 @@ class BlasrService(AlignService):
 
         if options.algorithmOptions is not None:
             cmdStr += " {0} ".format(options.algorithmOptions)
+
+        if options.unaligned is not None:
+            cmdStr += " -unaligned {f} -noPrintUnalignedSeqs".format(f=options.unaligned)
 
         return cmdStr
 
