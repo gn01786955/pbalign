@@ -223,80 +223,80 @@ class BlasrService(AlignService):
             Output:
                 a command-line string which can be used in bash.
         """
-        cmdStr = "blasr {queryFile} {targetFile} -out {outFile} ".format(
+        cmdStr = "blasr {queryFile} {targetFile} --out {outFile} ".format(
             queryFile=fileNames.queryFileName,
             targetFile=fileNames.targetFileName,
             outFile=fileNames.alignerSamOut)
 
         if getFileFormat(fileNames.alignerSamOut) == FILE_FORMATS.BAM:
-            cmdStr += " -bam "
+            cmdStr += " --bam "
         else:
-            cmdStr += " -sam "
+            cmdStr += " --sam "
 
         if ((fileNames.sawriterFileName is not None) and
                 (fileNames.sawriterFileName != "")):
-            cmdStr += " -sa {sawriter} ".format(
+            cmdStr += " --sa {sawriter} ".format(
                 sawriter=fileNames.sawriterFileName)
 
         if ((fileNames.regionTable != "") and
                 (fileNames.regionTable is not None)):
-            cmdStr += " -regionTable {regionTable} ".format(
+            cmdStr += " --regionTable {regionTable} ".format(
                 regionTable=fileNames.regionTable)
 
         if options.maxHits is not None and options.maxHits != "":
-            cmdStr += " -bestn {n}".format(n=options.maxHits)
+            cmdStr += " --bestn {n}".format(n=options.maxHits)
 
         if (options.minAnchorSize is not None and
                 options.minAnchorSize != ""):
-            cmdStr += " -minMatch {0} ".format(options.minAnchorSize)
+            cmdStr += " --minMatch {0} ".format(options.minAnchorSize)
 
         if options.nproc is not None and options.nproc != "":
-            cmdStr += " -nproc {0} ".format(options.nproc)
+            cmdStr += " --nproc {0} ".format(options.nproc)
 
         # Specify filter criteira and hit policy.
         if options.minLength is not None:
-            cmdStr += " -minSubreadLength {n} -minAlnLength {n} ".\
+            cmdStr += " --minSubreadLength {n} --minAlnLength {n} ".\
                     format(n=options.minLength)
 
         if options.maxDivergence is not None:
             maxDivergence = int(options.maxDivergence if options.maxDivergence
                                 > 1.0 else (options.maxDivergence * 100))
-            cmdStr += " -minPctSimilarity {0}".format(100 - maxDivergence)
+            cmdStr += " --minPctSimilarity {0}".format(100 - maxDivergence)
 
         if options.minAccuracy is not None:
             minAccuracy = int(options.minAccuracy if options.minAccuracy > 1.0
                               else (options.minAccuracy * 100))
-            cmdStr += " -minPctAccuracy {0}".format(minAccuracy)
+            cmdStr += " --minPctAccuracy {0}".format(minAccuracy)
 
         if options.scoreCutoff is not None:
-            cmdStr += " -maxScore {0}".format(options.scoreCutoff)
+            cmdStr += " --maxScore {0}".format(options.scoreCutoff)
 
-        cmdStr += " -hitPolicy {0} ".format(options.hitPolicy)
+        cmdStr += " --hitPolicy {0} ".format(options.hitPolicy)
 
         if options.noSplitSubreads:
-            cmdStr += " -noSplitSubreads "
+            cmdStr += " --noSplitSubreads "
 
         if options.concordant:
-            cmdStr += " -concordant "
+            cmdStr += " --concordant "
 
         if options.seed is not None and options.seed != 0:
-            cmdStr += " -randomSeed {0} ".format(options.seed)
+            cmdStr += " --randomSeed {0} ".format(options.seed)
 
         #if options.hitPolicy == "randombest":
-        #    cmdStr += " -placeRepeatsRandomly "
+        #    cmdStr += " --placeRepeatsRandomly "
 
         if options.useccs is not None and options.useccs != "":
-            cmdStr += " -{0} ".format(options.useccs)
+            cmdStr += " --{0} ".format(options.useccs)
 
         # When input is a FASTA file, blasr -clipping = soft
         if fileNames.inputFileFormat == FILE_FORMATS.FASTA:
-            cmdStr += " -clipping soft "
+            cmdStr += " --clipping soft "
 
         if options.algorithmOptions is not None:
             cmdStr += " {0} ".format(options.algorithmOptions)
 
         if options.unaligned is not None:
-            cmdStr += " -unaligned {f} -noPrintUnalignedSeqs".format(f=options.unaligned)
+            cmdStr += " --unaligned {f} --noPrintUnalignedSeqs".format(f=options.unaligned)
 
         return cmdStr
 
