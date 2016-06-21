@@ -17,6 +17,7 @@ setup(
         'pbcommand >= 0.2.0',
         'pysam',
         ],
+    test_requires=['pbtestdata'],
     entry_points={'console_scripts': [
         'pbalign=pbalign.pbalignrunner:main',
         'maskAlignedReads.py = pbalign.tools.mask_aligned_reads:main',

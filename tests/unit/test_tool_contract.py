@@ -7,7 +7,8 @@ import sys
 
 import pbcommand.testkit
 from pbcore.io import AlignmentSet, ConsensusAlignmentSet, openDataSet
-import pbcore.data
+
+import pbtestdata
 
 DATA_DIR = "/pbi/dept/secondary/siv/testdata/SA3-DS"
 DATA2 = "/pbi/dept/secondary/siv/testdata/pbalign-unittest2/data"
@@ -19,8 +20,8 @@ class TestPbalign(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "pbalign "
     REQUIRES_PBCORE = True
     INPUT_FILES = [
-        pbcore.data.getUnalignedBam(),
-        pbcore.data.getLambdaFasta()
+        pbtestdata.get_file("subreads-xml"),
+        pbtestdata.get_file("lambdaNEB")
     ]
     TASK_OPTIONS = {
         "pbalign.task_options.algorithm_options": "-holeNumbers 1-1000,30000-30500,60000-60600,100000-100500",
@@ -35,8 +36,8 @@ class TestPbalign(pbcommand.testkit.PbTestApp):
 class TestPbalignCCS(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "python -m pbalign.ccs"
     INPUT_FILES = [
-        pbcore.data.getCCSBAM(),
-        pbcore.data.getLambdaFasta()
+        pbtestdata.get_file("rsii-ccs"),
+        pbtestdata.get_file("lambdaNEB")
     ]
 
     def run_after(self, rtc, output_dir):
