@@ -12,7 +12,6 @@ import pbtestdata
 
 DATA_DIR = "/pbi/dept/secondary/siv/testdata/SA3-DS"
 DATA2 = "/pbi/dept/secondary/siv/testdata/pbalign-unittest2/data"
-DATA3 = "/pbi/dept/secondary/siv/testdata/pbsmrtpipe-unittest/data/chunk"
 REF_DIR = "/pbi/dept/secondary/siv/references"
 
 
@@ -24,7 +23,7 @@ class TestPbalign(pbcommand.testkit.PbTestApp):
         pbtestdata.get_file("lambdaNEB")
     ]
     TASK_OPTIONS = {
-        "pbalign.task_options.algorithm_options": "-holeNumbers 1-1000,30000-30500,60000-60600,100000-100500",
+        "pbalign.task_options.algorithm_options": "--holeNumbers 1-1000,30000-30500,60000-60600,100000-100500",
     }
 
     def run_after(self, rtc, output_dir):
@@ -57,13 +56,11 @@ except Exception as e:
 else:
     HAVE_BAMTOOLS = True
 
-@unittest.skipUnless(HAVE_BAMTOOLS and os.path.isdir(DATA3),
-                     "bamtools or %s missing" % DATA3)
+
+@unittest.skipUnless(HAVE_BAMTOOLS, "bamtools not installed")
 class TestConsolidateBam(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "python -m pbalign.tasks.consolidate_alignments"
-    INPUT_FILES = [
-        os.path.join(DATA3, "aligned_multi_bam.alignmentset.xml"),
-    ]
+    INPUT_FILES = [pbtestdata.get_file("aligned-ds-2")]
     TASK_OPTIONS = {
         "pbalign.task_options.consolidate_aligned_bam": True,
     }
@@ -74,8 +71,7 @@ class TestConsolidateBam(pbcommand.testkit.PbTestApp):
             self.assertEqual(len(f.toExternalFiles()), 1)
 
 
-@unittest.skipUnless(HAVE_BAMTOOLS and os.path.isdir(DATA3),
-                     "bamtools or %s missing" % DATA3)
+@unittest.skipUnless(HAVE_BAMTOOLS, "bamtools not installed")
 class TestConsolidateBamDisabled(TestConsolidateBam):
     TASK_OPTIONS = {
         "pbalign.task_options.consolidate_aligned_bam": False,

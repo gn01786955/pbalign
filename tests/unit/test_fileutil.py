@@ -1,23 +1,31 @@
 """Test pbalign.util/fileutil.py"""
 
+import tempfile
 import unittest
+import filecmp
+import shutil
 from os import path
+
+from pbcore.io import DataSet
+
 from pbalign.utils.fileutil import getFileFormat, \
     isValidInputFormat, isValidOutputFormat, getFilesFromFOFN, \
     checkInputFile, checkOutputFile, checkReferencePath, \
     real_upath, real_ppath, isExist
-from pbcore.io import DataSet
-import filecmp
-from test_setpath import ROOT_DIR, OUT_DIR, DATA_DIR
+
+from test_setpath import ROOT_DIR, DATA_DIR
 
 
 class Test_fileutil(unittest.TestCase):
     """Test pbalign.util/fileutil.py"""
     def setUp(self):
         self.rootDir = ROOT_DIR
-        self.outDir = OUT_DIR
+        self.outDir = tempfile.mkdtemp()
         self.dataDir = path.join(DATA_DIR,
                                  "testLoadPulses/Analysis_Results/")
+
+    def tearDown(self):
+        shutil.rmtree(self.outDir)
 
     def test_isValidInputFormat(self):
         """Test isValidInputFormat()."""
