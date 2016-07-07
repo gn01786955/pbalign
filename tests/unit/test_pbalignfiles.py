@@ -1,8 +1,13 @@
+
 import unittest
+import tempfile
 import filecmp
+import shutil
 from os import path
+
 from pbalign.pbalignfiles import PBAlignFiles
-from test_setpath import ROOT_DIR, OUT_DIR
+
+from test_setpath import ROOT_DIR
 
 class Test_PbAlignFiles_Ecoli(unittest.TestCase):
     def setUp(self):
@@ -12,7 +17,11 @@ class Test_PbAlignFiles_Ecoli(unittest.TestCase):
         self.targetFileName   = path.join(self.referencePath,
                                           "sequence/ecoli_k12_MG1655.fasta")
         self.sawriterFileName = self.targetFileName + ".sa"
-        self.outputFileName   = path.join(OUT_DIR, "tmp.sam")
+        self.OUT_DIR = tempfile.mkdtemp()
+        self.outputFileName   = path.join(self.OUT_DIR, "tmp.sam")
+
+    def tearDown(self):
+        shutil.rmtree(self.OUT_DIR)
 
     def test_init(self):
         """Test PBAlignFiles.__init__() with a reference repository."""
@@ -33,7 +42,11 @@ class Test_PbAlignFiles(unittest.TestCase):
         self.rootDir = ROOT_DIR
         self.inputFileName = path.join(self.rootDir, "data/lambda_bax.fofn")
         self.referenceFile = "/pbi/dept/secondary/siv/references/lambda/sequence/lambda.fasta"
-        self.outputFileName = path.join(OUT_DIR, "tmp.sam")
+        self.OUT_DIR = tempfile.mkdtemp()
+        self.outputFileName = path.join(self.OUT_DIR, "tmp.sam")
+
+    def tearDown(self):
+        shutil.rmtree(self.OUT_DIR)
 
     def test_init(self):
         """Test PBAlignFiles.__init__()."""

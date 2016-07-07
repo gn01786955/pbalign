@@ -96,54 +96,54 @@ class BlasrService(AlignService):
 
         ignoredBinaryOptions = ['-m', '-out', '-V']
         ignoredUnitaryOptions = ['-h', '--help', '--version',
-                                 '-v', '-vv', '-sam', '-bam']
+                                 '-v', '-vv', '--sam', '--bam']
 
         items = self.__parseAlgorithmOptionItems(options.algorithmOptions)
         i = 0
         try:
             while i < len(items):
                 infoMsg, errMsg, item = "", "", items[i]
-                if item == "-sa":
+                if item == "--sa":
                     val = real_upath(items[i+1])
                     if fileNames.sawriterFileName != val:
                         infoMsg = "Over write sa file with {0}".format(val)
                         fileNames.sawriterFileName = val
-                elif item == "-regionTable":
+                elif item == "--regionTable":
                     val = real_upath(items[i+1])
                     if fileNames.regionTable != val:
                         infoMsg = "Over write regionTable with {0}.\n"\
                                   .format(val)
                         fileNames.regionTable = val
-                elif item == "-bestn":
+                elif item == "--bestn":
                     val = int(items[i+1])
                     if options.maxHits is not None and \
                             int(options.maxHits) != val:
-                        errMsg = "blasr -bestn specified within " + \
+                        errMsg = "blasr --bestn specified within " + \
                                  "--algorithmOptions is equivalent to " + \
                                  "--maxHits. Conflicting values of " + \
-                                 "--algorithmOptions '-bestn' and " +\
+                                 "--algorithmOptions '--bestn' and " +\
                                  "--maxHits have been found."
                     else:
                         options.maxHits = val
-                elif item == "-minMatch":
+                elif item == "--minMatch":
                     val = int(items[i+1])
                     if options.minAnchorSize is not None and \
                             int(options.minAnchorSize) != val:
-                        errMsg = "blasr -minMatch specified within " + \
+                        errMsg = "blasr --minMatch specified within " + \
                                  "--algorithmOptions is equivalent to " + \
                                  "--minAnchorSize. Conflicting values " + \
-                                 "of --algorithmOptions '-minMatch' and " + \
+                                 "of --algorithmOptions '--minMatch' and " + \
                                  "--minAnchorSize have been found."
                     else:
                         options.minAnchorSize = val
-                elif item == "-nproc":
+                elif item == "--nproc":
                     val = int(items[i+1])
                     # The number of threads is not critical.
                     if options.nproc is None or \
                             int(options.nproc) != val:
                         infoMsg = "Over write nproc with {n}.".format(n=val)
                         options.nproc = val
-                elif item == "-noSplitSubreads":
+                elif item == "--noSplitSubreads":
                     if not options.noSplitSubreads:
                         infoMsg = "Over write noSplitSubreads with True."
                         logging.info(self.name +
@@ -151,25 +151,25 @@ class BlasrService(AlignService):
                         options.noSplitSubreads = True
                     del items[i]
                     continue
-                elif item == "-concordant":
+                elif item == "--concordant":
                     if not options.concordant:
                         infoMsg = "Over writer concordant with True."
                         logging.info(self.name +
                                      ": Resolve algorithmOptions. " + infoMsg)
                         options.concordant = True
                     del items[i]
-                elif "-useccs" in item:  # -useccs, -useccsall, -useccsdenovo
-                    val = item.lstrip('-')
+                elif "--useccs" in item:  # -useccs, -useccsall, -useccsdenovo
+                    val = item.lstrip('--')
                     if options.useccs != val and options.useccs is not None:
                         errMsg = "Found conflicting options in " + \
                             "--algorithmOptions '{v}' \nand --useccs={u}"\
                             .format(v=item, u=options.useccs)
                     else:
                         options.useccs = val
-                elif item == "-unaligned":
+                elif item == "--unaligned":
                     val = str(items[i+1])
                     options.unaligned = val
-                elif item == "-seed" or item == "-randomSeed":
+                elif item == "--seed" or item == "--randomSeed":
                     val = int(items[i+1])
                     if options.seed is None or int(options.seed) != val:
                         infoMsg = "Overwrite random seed with {0}.".format(val)

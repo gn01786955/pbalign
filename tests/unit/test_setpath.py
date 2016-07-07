@@ -22,6 +22,4 @@ def _get_data_std_dir():
               "and [stdDir] in config file {f}.".format(f=NOSE_CFG)
         raise KeyError(msg)
 
-OUT_DIR =  path.join(ROOT_DIR, "out")
 DATA_DIR, STD_DIR = _get_data_std_dir()
-
