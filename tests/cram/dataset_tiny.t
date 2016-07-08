@@ -6,7 +6,7 @@ Set up
   $ T=$REFDIR/lambda/reference.dataset.xml
   $ O=$OUTDIR/tiny_bam.bam
   $ rm -f $O
-  $ pbalign $D $T $O --algorithmOptions=" -holeNumbers 1-1000,30000-30500,60000-60600,100000-100500" >/dev/null
+  $ pbalign $D $T $O --algorithmOptions=" --holeNumbers 1-1000,30000-30500,60000-60600,100000-100500" >/dev/null
 
 Try feeding an aligned bam back in...
   $ RA=$OUTDIR/tiny_bam_realigned.bam

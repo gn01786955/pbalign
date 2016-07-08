@@ -6,7 +6,7 @@ Set up
   $ T=$DATDIR/reference_lambda.xml
   $ O=$OUTDIR/xml_in_bam_out.bam
   $ rm -f $O
-  $ pbalign $Q $T $O --algorithmOptions=" -holeNumbers 1-2000" >/dev/null 2>/dev/null
+  $ pbalign $Q $T $O --algorithmOptions=" --holeNumbers 1-2000" >/dev/null 2>/dev/null
   $ echo $?
   0
 
@@ -15,7 +15,7 @@ Set up
   $ T=$DATDIR/reference_lambda.xml
   $ O=$OUTDIR/xml_in_xml_out.xml
   $ rm -f $O
-  $ pbalign $Q $T $O --algorithmOptions=" -holeNumbers 1-2000" >/dev/null 2>/dev/null
+  $ pbalign $Q $T $O --algorithmOptions=" --holeNumbers 1-2000" >/dev/null 2>/dev/null
   $ echo $?
   0
 
@@ -32,7 +32,7 @@ Set up
   $ T=$DATSIVDIR/ecoli.fasta
   $ O=$OUTDIR/xml_in_bam_out_2.bam
   $ rm -f $O
-  $ pbalign $Q $T $O --algorithmOptions=" -holeNumbers 1-2000" >/dev/null 2>/dev/null
+  $ pbalign $Q $T $O --algorithmOptions=" --holeNumbers 1-2000" >/dev/null 2>/dev/null
   $ echo $?
   0
 
