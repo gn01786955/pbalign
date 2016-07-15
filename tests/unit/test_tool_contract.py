@@ -69,6 +69,11 @@ class TestConsolidateBam(pbcommand.testkit.PbTestApp):
         with AlignmentSet(rtc.task.output_files[0]) as f:
             f.assertIndexed()
             self.assertEqual(len(f.toExternalFiles()), 1)
+            # test for bug 33778
+            qnames = set()
+            for rec in f:
+                qnames.add(rec.qName)
+            self.assertEqual(len(qnames), len(f))
 
 
 @unittest.skipUnless(HAVE_BAMTOOLS, "bamtools not installed")
