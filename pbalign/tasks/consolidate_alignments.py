@@ -6,11 +6,13 @@ Consolidate AlignmentSet .bam files
 """
 
 import functools
+import tempfile
 import logging
 import os.path as op
+import os
 import sys
 
-from pbcommand.models import get_pbparser, FileTypes
+from pbcommand.models import get_pbparser, FileTypes, ResourceTypes
 from pbcommand.cli import pbparser_runner
 from pbcommand.utils import setup_log
 from pbcore.io import openDataSet
@@ -30,7 +32,8 @@ def get_parser():
                      "AlignmentSet consolidate",
                      __doc__,
                      Constants.DRIVER,
-                     is_distributed=True)
+                     is_distributed=True,
+                     resource_types=(ResourceTypes.TMP_DIR,))
 
     p.add_input_file_type(FileTypes.DS_ALIGN, "align_in", "Input AlignmentSet",
                           "Gathered AlignmentSet to consolidate")
@@ -70,6 +73,7 @@ def args_runner(args):
 
 
 def rtc_runner(rtc):
+    tempfile.tempdir = rtc.task.tmpdir_resources[0].path
     return run_consolidate(
         dataset_file=rtc.task.input_files[0],
         output_file=rtc.task.output_files[0],
