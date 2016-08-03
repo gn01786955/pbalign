@@ -260,7 +260,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         action="store",
                         help=helpstr)
 
-    helpstr = "The minimum percentage accuracy of alignments that\n" + \
+    helpstr = "The minimum concordance of alignments that\n" + \
               "will be evaluated. Default value is {v}." \
               .format(v=DEFAULT_OPTIONS["minAccuracy"])
     filter_group.add_argument("--minAccuracy",
@@ -272,8 +272,8 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         help=helpstr)
     tcp.add_float(C.MIN_ACCURACY_ID, "minAccuracy",
         default=DEFAULT_OPTIONS["minAccuracy"],
-        name="Min. accuracy",
-        description="Minimum required alignment accuracy (percent)")
+        name="Min. concordance",
+        description="Minimum required alignment concordance")
 
     helpstr = "The minimum aligned read length of alignments that\n" + \
               "will be evaluated. Default value is {v}." \
