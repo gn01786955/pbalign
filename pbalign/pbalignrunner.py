@@ -34,7 +34,7 @@
 PBAlignRunner uses AlignService to align PacBio reads in FASTA/BASE/PULSE/FOFN
 formats to reference sequences, then uses FilterServices to filter out
 alignments that do not satisfy filtering criteria, and finally generates a SAM
-or CMP.H5 file.
+or BAM file.
 
 """
 
@@ -48,14 +48,12 @@ import shutil
 
 from pbcommand.cli import pbparser_runner
 from pbcommand.utils import setup_log
-from pbcore.util.Process import backticks
 from pbcore.util.ToolRunner import PBToolRunner
-from pbcore.io import (AlignmentSet, ConsensusAlignmentSet, ConsensusReadSet,
-                       openDataSet)
+from pbcore.io import (AlignmentSet, ConsensusAlignmentSet)
 
 from pbalign.__init__ import get_version
 from pbalign.options import (ALGORITHM_CANDIDATES, get_contract_parser,
-    resolved_tool_contract_to_args)
+                             resolved_tool_contract_to_args)
 from pbalign.alignservice.blasr import BlasrService
 from pbalign.alignservice.bowtie import BowtieService
 from pbalign.alignservice.gmap import GMAPService
@@ -63,7 +61,6 @@ from pbalign.utils.fileutil import getFileFormat, FILE_FORMATS, real_ppath
 from pbalign.utils.tempfileutil import TempFileManager
 from pbalign.pbalignfiles import PBAlignFiles
 from pbalign.filterservice import FilterService
-from pbalign.forquiverservice.forquiver import ForQuiverService
 from pbalign.bampostservice import BamPostService
 
 class PBAlignRunner(PBToolRunner):
@@ -147,26 +144,13 @@ class PBAlignRunner(PBToolRunner):
             args.readType = "CCS"
 
         if args.forQuiver:
-            if args.useccs is not None:
-                errMsg = "Options --forQuiver and --useccs should not " + \
-                         "be used together, since Quiver is not designed to " + \
-                         "polish ccs reads. if you want to align ccs reads" + \
-                         "in cmp.h5 format with pulse QVs loaded, use " + \
-                         "--loadQVs with --useccs instead."
-                raise ValueError(errMsg)
-            args.loadQVs = True
+            logging.warning("Option --forQuiver has been deprecated in 3.0")
 
         outFormat = getFileFormat(fileNames.outputFileName)
-        if args.loadQVs:
-            if fileNames.pulseFileName is None:
-                errMsg = "The input file has to be in bas/pls/ccs.h5 " + \
-                         "format, or --pulseFile needs to be specified, "
-            if outFormat != FILE_FORMATS.CMP:
-                errMsg = "The output file has to be in cmp.h5 format, "
-            if errMsg != "":
-                errMsg += "in order to load pulse QVs."
-                logging.error(errMsg)
-                raise ValueError(errMsg)
+
+        if outFormat == FILE_FORMATS.CMP:
+            errMsg = "pbalign no longer supports CMP.H5 Output in 3.0."
+            raise IOError(errMsg)
 
         if outFormat == FILE_FORMATS.BAM or outFormat == FILE_FORMATS.XML:
             if args.algorithm != "blasr":
@@ -183,12 +167,12 @@ class PBAlignRunner(PBToolRunner):
         """
         pass
 
-    def _output(self, inSam, refFile, outFile, readType=None, smrtTitle=False):
-        """Generate a SAM, BAM or a CMP.H5 file.
+    def _output(self, inSam, refFile, outFile, readType=None):
+        """Generate a SAM, BAM file.
         Input:
             inSam   : an input SAM/BAM file. (e.g. fileName.filteredSam)
             refFile : the reference file. (e.g. fileName.targetFileName)
-            outFile : the output SAM/BAM or CMP.H5 file.
+            outFile : the output SAM/BAM file
                       (i.e. fileName.outputFileName)
             readType: standard or cDNA or CCS (can be None if not specified)
         Output:
@@ -202,44 +186,31 @@ class PBAlignRunner(PBToolRunner):
             pass # Nothing to be done
         if outFormat == FILE_FORMATS.SAM:
             logging.info("OutputService: Genearte the output SAM file.")
-            logging.debug("OutputService: Move {src} as {dst}".format(
-                src=inSam, dst=outFile))
+            logging.debug("OutputService: Move %s as %s", inSam, outFile)
             try:
                 shutil.move(real_ppath(inSam), real_ppath(outFile))
             except shutil.Error as e:
-                output, errCode, errMsg = "", 1, str(e)
+                output, errCode, errMsg = "", 1, "Exited with error: " + str(e)
+                logging.error(errMsg)
+                raise RuntimeError(errMsg)
         elif outFormat == FILE_FORMATS.CMP:
-            #`samtoh5 inSam outFile -readType readType
-            logging.info("OutputService: Genearte the output CMP.H5 " +
-                         "file using samtoh5.")
-            prog = "samtoh5"
-            cmd = "samtoh5 {samFile} {refFile} {outFile}".format(
-                samFile=inSam, refFile=refFile, outFile=outFile)
-            if readType is not None:
-                cmd += " -readType {0} ".format(readType)
-            if smrtTitle:
-                cmd += " -smrtTitle "
-            # Execute the command line
-            logging.debug("OutputService: Call \"{0}\"".format(cmd))
-            output, errCode, errMsg = backticks(cmd)
+            errMsg = "pbalign no longer supports CMP.H5 Output in 3.0."
+            logging.error(errMsg)
+            raise IOError(errMsg)
         elif outFormat == FILE_FORMATS.XML:
-            logging.info("OutputService: Generating the output XML file".
-                         format(samFile=inSam, outFile=outFile))
+            logging.info("OutputService: Generating the output XML file %s %s",
+                         inSam, outFile)
             # Create {out}.xml, given {out}.bam
             outBam = str(outFile[0:-3]) + "bam"
             aln = None
             # FIXME This should really be more automatic
-            if self.args.readType == "CCS":
+            if readType == "CCS":
                 self._output_dataset_type = ConsensusAlignmentSet
             aln = self._output_dataset_type(real_ppath(outBam))
             for res in aln.externalResources:
                 res.reference = refFile
             aln.write(outFile)
 
-        if errCode != 0:
-            errMsg = prog + " returned a non-zero exit status." + errMsg
-            logging.error(errMsg)
-            raise RuntimeError(errMsg)
         return output, errCode, errMsg
 
     def _cleanUp(self, realDelete=False):
@@ -252,8 +223,7 @@ class PBAlignRunner(PBToolRunner):
         The main function, it is called by PBToolRunner.start().
         """
         startTime = time.time()
-        logging.info("pbalign version: {version}".format(version=get_version()))
-        # FIXME
+        logging.info("pbalign version: %s", get_version())
         #logging.debug("Original arguments: " + str(self._argumentList))
 
         # Create an AlignService by algorithm name.
@@ -266,10 +236,7 @@ class PBAlignRunner(PBToolRunner):
         self._makeSane(self.args, self.fileNames)
 
         # Run align service.
-        try:
-            self._alnService.run()
-        except RuntimeError:
-            return 1
+        self._alnService.run()
 
         # Create a temporary filtered SAM/BAM file as output for FilterService.
         outFormat = getFileFormat(self.fileNames.outputFileName)
@@ -287,53 +254,30 @@ class PBAlignRunner(PBToolRunner):
                                             self._alnService.scoreSign,
                                             self.args,
                                             self.fileNames.adapterGffFileName)
-        try:
-            self._filterService.run()
-        except RuntimeError:
-            return 1
+        self._filterService.run()
 
         # Sort bam before output
         if outFormat in [FILE_FORMATS.BAM, FILE_FORMATS.XML]:
             # Sort/make index for BAM output.
-            try:
-                BamPostService(self.fileNames).run()
-            except RuntimeError:
-                return 1
+            BamPostService(self.fileNames).run()
 
-        # Output all hits in SAM, BAM or CMP.H5.
-        try:
-            useSmrtTitle = False
-            if (self.args.algorithm != "blasr" or
-                self.fileNames.inputFileFormat == FILE_FORMATS.FASTA):
-                useSmrtTitle = True
-
-            self._output(
-                inSam=self.fileNames.filteredSam,
-                refFile=self.fileNames.targetFileName,
-                outFile=self.fileNames.outputFileName,
-                readType=self.args.readType,
-                smrtTitle=useSmrtTitle)
-        except RuntimeError:
-            return 1
-
-        # Load QVs to cmp.h5 for Quiver
-        if outFormat == FILE_FORMATS.CMP and \
-            self.args.forQuiver or self.args.loadQVs:
-            # Call post service for quiver.
-            try:
-                ForQuiverService(self.fileNames, self.args).run()
-            except RuntimeError:
-                return 1
+        # Output all hits in SAM, BAM.
+        self._output(
+            inSam=self.fileNames.filteredSam,
+            refFile=self.fileNames.targetFileName,
+            outFile=self.fileNames.outputFileName,
+            readType=self.args.readType)
 
         # Delete temporay files anyway to make
         self._cleanUp(False if (hasattr(self.args, "keepTmpFiles") and
-                               self.args.keepTmpFiles is True) else True)
+                                self.args.keepTmpFiles is True) else True)
 
         endTime = time.time()
         logging.info("Total time: {:.2f} s.".format(float(endTime - startTime)))
         return 0
 
 def args_runner(args, output_dataset_type=AlignmentSet):
+    """args runner"""
     # PBAlignRunner inherits PBToolRunner. So PBAlignRunner.start() parses args,
     # sets up logging and finally returns run().
     return PBAlignRunner(args, output_dataset_type=output_dataset_type).start()
@@ -354,6 +298,7 @@ resolved_tool_contract_runner_ccs = functools.partial(
 
 def main(argv=sys.argv, get_parser_func=get_contract_parser,
          contract_runner_func=resolved_tool_contract_runner):
+    """Main, supporting both args runner and tool contract runner."""
     return pbparser_runner(
         argv=argv[1:],
         parser=get_parser_func(),
