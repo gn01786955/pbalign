@@ -64,8 +64,10 @@ class Constants(object):
 Mapping PacBio sequences to references using an algorithm selected from a
 selection of supported command-line alignment algorithms. Input can be a
 fasta, pls.h5, bas.h5 or ccs.h5 file or a fofn (file of file names). Output
-can be in CMP.H5, SAM or BAM format. If output is BAM format, aligner can
-only be blasr and QVs will be loaded automatically."""
+can be in SAM or BAM format. If output is BAM format, aligner can
+only be blasr and QVs will be loaded automatically.
+
+NOTE that pbalign no longer supports CMP.H5 in 3.0."""
 
 # The first candidate 'blasr' is the default.
 ALGORITHM_CANDIDATES = ('blasr', 'bowtie', 'gmap')
@@ -360,6 +362,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         help=helpstr)
 
     # Output.
+    # CMP H5 output has been deprecated, let's hide associated options.
     cmph5_group = parser.add_argument_group("Options for cmp.h5")
     helpstr = "Specify the ReadType attribute in the cmp.h5 output.\n" + \
               "Default value is {v}.".format(v=DEFAULT_OPTIONS["readType"])
@@ -369,7 +372,6 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         action="store",
                         default=DEFAULT_OPTIONS["readType"],
                         help=argparse.SUPPRESS)
-                        #help=helpstr)
 
     helpstr = "The output cmp.h5 file which will be sorted, loaded\n" + \
               "with pulse QV information, and repacked, so that it \n" + \
@@ -380,7 +382,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         dest="forQuiver",
                         action="store_true",
                         default=DEFAULT_OPTIONS["forQuiver"],
-                        help=helpstr)
+                        help=argparse.SUPPRESS)
 
     helpstr = "Similar to --forQuiver, the only difference is that \n" + \
               "--useccs can be specified. Default value is False."
@@ -388,7 +390,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         dest="loadQVs",
                         action="store_true",
                         default=DEFAULT_OPTIONS["loadQVs"],
-                        help=helpstr)
+                        help=argparse.SUPPRESS)
 
     helpstr = "Load pulse information using -byread option instead\n" + \
               "of -bymetric. Only works when --forQuiver or \n" + \
@@ -397,7 +399,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         dest="byread",
                         action="store_true",
                         default=DEFAULT_OPTIONS["byread"],
-                        help=helpstr)
+                        help=argparse.SUPPRESS)
 
     helpstr = "Load the specified (comma-delimited list of) metrics\n" + \
               "instead of the default metrics required by quiver.\n" + \
@@ -409,7 +411,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         type=str,
                         action="store",
                         default=DEFAULT_OPTIONS["metrics"],
-                        help=helpstr)
+                        help=argparse.SUPPRESS)
 
     # Miscellaneous.
     misc_group = parser.add_argument_group("Miscellaneous options")

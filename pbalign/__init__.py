@@ -60,7 +60,7 @@ def get_dir():
     """Return lib directory."""
     return op.dirname(op.realpath(__file__))
 
-VERSION = (0, 2, 0, get_changelist())
+VERSION = (3, 0, 0)
 
 
 def get_version():
