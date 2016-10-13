@@ -594,8 +594,8 @@ def get_contract_parser(C=Constants, ccs_mode=False):
     p.add_input_file_type(FileTypes.DS_REF, "referencePath",
         "ReferenceSet", "Reference DataSet or FASTA file")
     p.add_output_file_type(C.OUTPUT_FILE_TYPE, "outputFileName",
-        name="XML DataSet",
-        description="Output AlignmentSet file",
+        name="Alignments",
+        description="Alignment results dataset",
         default_name=C.OUTPUT_FILE_NAME)
     constructOptionParser(p, ccs_mode=ccs_mode)
     p.arg_parser.parser.add_argument(
