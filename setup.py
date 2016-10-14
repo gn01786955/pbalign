@@ -5,7 +5,7 @@ import sys
 
 setup(
     name = 'pbalign',
-    version='0.2.0',
+    version='0.3.0',
     author='Pacific Biosciences',
     author_email='devnet@pacificbiosciences.com',
     license='LICENSE.txt',
