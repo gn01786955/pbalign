@@ -39,8 +39,8 @@ def get_parser():
                           "Gathered AlignmentSet to consolidate")
     p.add_output_file_type(FileTypes.DS_ALIGN,
                            "ds_out",
-                           "AlignmentSet",
-                           description="Consolidated AlignmentSet",
+                           "Alignments",
+                           description="Alignment results dataset",
                            default_name="combined")
     p.add_boolean(Constants.CONSOLIDATE_ID, "consolidate",
         default=False,
