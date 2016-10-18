@@ -43,6 +43,8 @@ from pbcommand.models import FileTypes, SymbolTypes, ResourceTypes, get_pbparser
 from pbcommand.common_options import add_resolved_tool_contract_option, \
     add_debug_option, add_base_options
 
+from pbalign.__init__ import get_version
+
 log = logging.getLogger(__name__)
 
 
@@ -59,7 +61,7 @@ class Constants(object):
     CONCORDANT_ID = "pbalign.task_options.concordant"
     HIT_POLICY_ID = "pbalign.task_options.hit_policy"
     DRIVER_EXE = "pbalign --resolved-tool-contract "
-    VERSION = "3.0"
+    VERSION = get_version()
     PARSER_DESC = """\
 Mapping PacBio sequences to references using an algorithm selected from a
 selection of supported command-line alignment algorithms. Input can be a
