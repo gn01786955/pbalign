@@ -80,14 +80,48 @@ class BamPostService(Service):
             raise ValueError("sorted bam file name %s must end with .bam" %
                              sortedBamFile)
         sortedPrefix = sortedBamFile[0:-4]
-        cmd = 'samtools sort -m 4G {unsortedBamFile} {prefix}'.format(
-            unsortedBamFile=unsortedBamFile, prefix=sortedPrefix)
+        cmd = 'samtools --version'
+        _samtoolsversion = ["0","1","19"]
+        try:
+            _out, _code, _msg = Execute(self.name, cmd)
+            if "samtools" in _out[0]:
+                _samtoolsversion = str(_out[0][8:]).strip().split('.')
+            else:
+                pass
+        except Exception:
+            pass
+        logging.info(self.name + ": blah  %s %s %s" % (_out, _code, _msg))
+        logging.info(self.name + ": samtoolsversion %s %s %s" % (_samtoolsversion[0],_samtoolsversion[1],_samtoolsversion[2]))
+        _stvmajor = int(_samtoolsversion[0])
+        if _stvmajor >= 1:
+            cmd = 'samtools sort -m 4G -o {sortedBamFile} {unsortedBamFile}'.format(
+                sortedBamFile=sortedBamFile, unsortedBamFile=unsortedBamFile)
+        else:
+            cmd = 'samtools sort -m 4G {unsortedBamFile} {prefix}'.format(
+                unsortedBamFile=unsortedBamFile, prefix=sortedPrefix)
         Execute(self.name, cmd)
 
     def _makebai(self, sortedBamFile, outBaiFile):
         """Build *.bai index file."""
-        cmd = "samtools index {sortedBamFile} {outBaiFile}".format(
-            sortedBamFile=sortedBamFile, outBaiFile=outBaiFile)
+        cmd = 'samtools --version'
+        _samtoolsversion = ["0","1","19"]
+        try:
+            _out, _code, _msg = Execute(self.name, cmd)
+            if "samtools" in _out[0]:
+                _samtoolsversion = str(_out[0][8:]).strip().split('.')
+            else:
+                pass
+        except Exception:
+            pass
+        _stvmajor = int(_samtoolsversion[0])
+        _stvminor = int(_samtoolsversion[1])
+        if _stvmajor == 1 and _stvminor == 2:
+            # only for 1.2
+            cmd = "samtools index {sortedBamFile}".format(
+                sortedBamFile=sortedBamFile)
+        else:
+            cmd = "samtools index {sortedBamFile} {outBaiFile}".format(
+                sortedBamFile=sortedBamFile, outBaiFile=outBaiFile)
         Execute(self.name, cmd)
 
     def _makepbi(self, sortedBamFile):
