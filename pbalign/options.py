@@ -36,12 +36,9 @@ from __future__ import absolute_import
 import argparse
 import logging
 from copy import copy
-import json
-import sys
 
 from pbcommand.models import FileTypes, SymbolTypes, ResourceTypes, get_pbparser
-from pbcommand.common_options import add_resolved_tool_contract_option, \
-    add_debug_option, add_base_options
+from pbcommand.common_options import add_debug_option, add_base_options
 
 from pbalign.__init__ import get_version
 
@@ -125,7 +122,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
     tcp = p.tool_contract_parser
     parser = parser.arg_parser.parser
     #parser.argument_default = argparse.SUPPRESS
-    parser.formatter_class = argparse.RawTextHelpFormatter
+    parser.formatter_class = argparse.ArgumentDefaultsHelpFormatter
     add_debug_option(parser)
 
     # Optional input.
@@ -157,7 +154,6 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
     # Chose an aligner.
     align_group = parser.add_argument_group("Alignment options")
     helpstr = "Select an aligorithm from {0}.\n".format(ALGORITHM_CANDIDATES)
-    helpstr += "Default algorithm is {0}.".format(DEFAULT_OPTIONS["algorithm"])
     align_group.add_argument("--algorithm",
                         dest="algorithm",
                         type=str,
@@ -168,8 +164,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
 
     # Aligner options.
     helpstr = "The maximum number of matches of each read to the \n" + \
-              "reference sequence that will be evaluated. Default\n" + \
-              "value is {0}.".format(DEFAULT_OPTIONS["maxHits"])
+              "reference sequence that will be evaluated."
     align_group.add_argument("--maxHits",
                         dest="maxHits",
                         type=int,
@@ -178,8 +173,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         help=helpstr)
 
     helpstr = "The minimum anchor size defines the length of the read\n" + \
-              "that must match against the reference sequence. Default\n" + \
-              "value is {0}.".format(DEFAULT_OPTIONS["minAnchorSize"])
+              "that must match against the reference sequence."
     align_group.add_argument("--minAnchorSize",
                         dest="minAnchorSize",
                         type=int,
@@ -203,8 +197,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         help=helpstr)
 
     helpstr = "Do not split reads into subreads even if subread \n" + \
-              "regions are available. Default value is {0}."\
-              .format(DEFAULT_OPTIONS["noSplitSubreads"])
+              "regions are available."
     align_group.add_argument("--noSplitSubreads",
                         dest="noSplitSubreads",
                         default=DEFAULT_OPTIONS["noSplitSubreads"],
@@ -228,8 +221,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
             name="Concordant alignment",
             description="Map subreads of a ZMW to the same genomic location")
 
-    helpstr = "Number of threads. Default value is {v}."\
-              .format(v=DEFAULT_OPTIONS["nproc"])
+    helpstr = "Number of threads."
     align_group.add_argument("--nproc",
                         type=int,
                         dest="nproc",
@@ -254,8 +246,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
     # Filtering criteria and hit policy.
     filter_group = parser.add_argument_group("Filter criteria options")
     helpstr = "The maximum allowed percentage divergence of a read \n" + \
-              "from the reference sequence. Default value is {0}." \
-              .format(DEFAULT_OPTIONS["maxDivergence"])
+              "from the reference sequence."
     filter_group.add_argument("--maxDivergence",
                         dest="maxDivergence",
                         type=float,
@@ -265,8 +256,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         help=helpstr)
 
     helpstr = "The minimum concordance of alignments that\n" + \
-              "will be evaluated. Default value is {v}." \
-              .format(v=DEFAULT_OPTIONS["minAccuracy"])
+              "will be evaluated."
     filter_group.add_argument("--minAccuracy",
                         dest="minAccuracy",
                         type=float,
@@ -280,8 +270,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
         description="Minimum required alignment concordance")
 
     helpstr = "The minimum aligned read length of alignments that\n" + \
-              "will be evaluated. Default value is {v}." \
-              .format(v=DEFAULT_OPTIONS["minLength"])
+              "will be evaluated."
     filter_group.add_argument("--minLength",
                         dest="minLength",
                         type=int,
@@ -341,8 +330,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
            "  allbest   : selects all the best score hits.\n" + \
            "  randombest: selects a random hit from all best score hits.\n" + \
            "  leftmost  : selects a hit which has the best score and the\n" + \
-           "              smallest mapping coordinate in any reference.\n" + \
-           "Default value is {v}.".format(v=DEFAULT_OPTIONS["hitPolicy"])
+           "              smallest mapping coordinate in any reference.\n"
     filter_group.add_argument("--hitPolicy",
                         dest="hitPolicy",
                         type=str,
@@ -366,8 +354,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
     # Output.
     # CMP H5 output has been deprecated, let's hide associated options.
     cmph5_group = parser.add_argument_group("Options for cmp.h5")
-    helpstr = "Specify the ReadType attribute in the cmp.h5 output.\n" + \
-              "Default value is {v}.".format(v=DEFAULT_OPTIONS["readType"])
+    helpstr = "Specify the ReadType attribute in the cmp.h5 output.\n"
     cmph5_group.add_argument("--readType",
                         dest="readType",
                         type=str,
@@ -379,7 +366,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
               "with pulse QV information, and repacked, so that it \n" + \
               "can be consumed by quiver directly. This requires\n" + \
               "the input file to be in PacBio bas/pls.h5 format,\n" + \
-              "and --useccs must be None. Default value is False."
+              "and --useccs must be None."
     cmph5_group.add_argument("--forQuiver",
                         dest="forQuiver",
                         action="store_true",
@@ -387,7 +374,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         help=argparse.SUPPRESS)
 
     helpstr = "Similar to --forQuiver, the only difference is that \n" + \
-              "--useccs can be specified. Default value is False."
+              "--useccs can be specified."
     cmph5_group.add_argument("--loadQVs",
                         dest="loadQVs",
                         action="store_true",
@@ -396,7 +383,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
 
     helpstr = "Load pulse information using -byread option instead\n" + \
               "of -bymetric. Only works when --forQuiver or \n" + \
-              "--loadQVs are set. Default value is False."
+              "--loadQVs are set."
     cmph5_group.add_argument("--byread",
                         dest="byread",
                         action="store_true",
@@ -406,8 +393,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
     helpstr = "Load the specified (comma-delimited list of) metrics\n" + \
               "instead of the default metrics required by quiver.\n" + \
               "This option only works when --forQuiver  or \n" + \
-              "--loadQVs are set. Default: {m}".\
-              format(m=DEFAULT_OPTIONS["metrics"])
+              "--loadQVs are set."
     cmph5_group.add_argument("--metrics",
                         dest="metrics",
                         type=str,
@@ -426,8 +412,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                             help=helpstr)
 
     helpstr = "Initialize the random number generator with a none-zero \n" + \
-              "integer. Zero means that current system time is used.\n" + \
-              "Default value is {v}.".format(v=DEFAULT_OPTIONS["seed"])
+              "integer. Zero means that current system time is used.\n"
     misc_group.add_argument("--seed",
                         dest="seed",
                         type=int,
@@ -435,8 +420,7 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                         action="store",
                         help=helpstr)
 
-    helpstr = "Specify a directory for saving temporary files.\n" + \
-              "Default is {v}.".format(v=DEFAULT_OPTIONS["tmpDir"])
+    helpstr = "Specify a directory for saving temporary files.\n"
     misc_group.add_argument("--tmpDir",
                         dest="tmpDir",
                         type=str,
@@ -571,7 +555,6 @@ def get_contract_parser(C=Constants, ccs_mode=False):
     method can optionally be overridden with a different Constants object for
     defining additional tasks (e.g. CCS alignment).
     """
-    resources = ()
     p = get_pbparser(
         tool_id=C.TOOL_ID,
         version=C.VERSION,
