@@ -90,8 +90,6 @@ class BamPostService(Service):
                 pass
         except Exception:
             pass
-        logging.info(self.name + ": blah  %s %s %s" % (_out, _code, _msg))
-        logging.info(self.name + ": samtoolsversion %s %s %s" % (_samtoolsversion[0],_samtoolsversion[1],_samtoolsversion[2]))
         _stvmajor = int(_samtoolsversion[0])
         if _stvmajor >= 1:
             cmd = 'samtools sort -m 4G -o {sortedBamFile} {unsortedBamFile}'.format(
