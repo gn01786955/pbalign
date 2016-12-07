@@ -21,6 +21,8 @@ Call samtools index to check whether out.bam is sorted or not and coverage is su
 
   $ samtools flagstat $O
   248 + 0 in total (QC-passed reads + QC-failed reads)
+  0 + 0 secondary
+  0 + 0 supplementary
   0 + 0 duplicates
   248 + 0 mapped * (glob)
   0 + 0 paired in sequencing
