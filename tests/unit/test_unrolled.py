@@ -19,7 +19,7 @@ BASE_ARGS = [
     "pbalign",
     "--nproc", "8",
     "--hitPolicy=leftmost",
-    "--algorithmOptions", "--bestn 1 --forwardOnly --fastMaxInterval --maxAnchorsPerPosition 30000 --ignoreHQRegions --minPctIdentity 60",
+    "--algorithmOptions", "--bestn 1 --forwardOnly --fastMaxInterval --maxAnchorsPerPosition 30000 --minPctIdentity 60",
 ]
 
 skip_unless_files_present = unittest.skipUnless(
@@ -66,7 +66,7 @@ class TestUnrolledBAM(unittest.TestCase):
 
 
 @skip_unless_files_present
-class TestToolContract(pbcommand.testkit.PbTestApp): 
+class TestToolContract(pbcommand.testkit.PbTestApp):
     DRIVER_BASE = "pbalign"
     INPUT_FILES = [
         op.join(DATA, "m54006_151021_185942.subreadset.xml"),
@@ -76,7 +76,7 @@ class TestToolContract(pbcommand.testkit.PbTestApp):
         "pbalign.task_options.no_split_subreads": True,
         "pbalign.task_options.hit_policy": "leftmost",
         "pbalign.task_options.concordant": False,
-        "pbalign.task_options.algorithm_options": "--bestn 1 --forwardOnly --fastMaxInterval --maxAnchorsPerPosition 30000 --ignoreHQRegions --minPctIdentity 60"
+        "pbalign.task_options.algorithm_options": "--bestn 1 --forwardOnly --fastMaxInterval --maxAnchorsPerPosition 30000 --minPctIdentity 60"
     }
 
     def run_after(self, rtc, output_dir):
