@@ -89,6 +89,7 @@ DEFAULT_OPTIONS = {"regionTable": None,
                    # Aligner options
                    "maxHits": 10,
                    "minAnchorSize": 12,
+                   "maxMatch": 30,
                    "noSplitSubreads": False,
                    "concordant": False,
                    "unaligned": None,
@@ -181,6 +182,11 @@ def constructOptionParser(parser, C=Constants, ccs_mode=False):
                                        # --algorithmOptions
                         action="store",
                         help=helpstr)
+
+    helpstr = "BLASR maxMatch option. (Will be overriden if is also set in algorithmOptions)"
+    align_group.add_argument("--maxMatch", dest="maxMatch", type=int,
+                             default=DEFAULT_OPTIONS["maxMatch"],
+                             action="store", help=helpstr)
 
     # Aligner options: Use ccs or not?
     helpstr = "Map the ccsSequence to the genome first, then align\n" + \

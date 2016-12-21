@@ -136,6 +136,12 @@ class BlasrService(AlignService):
                                  "--minAnchorSize have been found."
                     else:
                         options.minAnchorSize = val
+                elif item == "--maxMatch":
+                    val = int(items[i+1])
+                    if options.maxMatch is not None and \
+                            int(options.maxMatch) != val:
+                        infoMsg = "Override maxMatch with {n}.".format(n=val)
+                        options.maxMatch = val
                 elif item == "--nproc":
                     val = int(items[i+1])
                     # The number of threads is not critical.
@@ -249,6 +255,9 @@ class BlasrService(AlignService):
         if (options.minAnchorSize is not None and
                 options.minAnchorSize != ""):
             cmdStr += " --minMatch {0} ".format(options.minAnchorSize)
+
+        if (options.maxMatch is not None and options.maxMatch != ""):
+            cmdStr += " --maxMatch {0} ".format(options.maxMatch)
 
         if options.nproc is not None and options.nproc != "":
             cmdStr += " --nproc {0} ".format(options.nproc)
