@@ -17,7 +17,7 @@ class Constants(pbalign.options.Constants):
     INPUT_FILE_TYPE = FileTypes.DS_CCS
     OUTPUT_FILE_TYPE = FileTypes.DS_ALIGN_CCS
     # some modified defaults
-    ALGORITHM_OPTIONS_DEFAULT = "-minMatch 12 -bestn 1 -minPctSimilarity 70.0"
+    ALGORITHM_OPTIONS_DEFAULT = "--minMatch 12 --bestn 10 --minPctSimilarity 70.0"
 
 def get_parser():
     return pbalign.options.get_contract_parser(Constants, ccs_mode=True)
