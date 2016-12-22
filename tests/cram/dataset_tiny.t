@@ -16,8 +16,9 @@ Call samtools index to check whether out.bam is sorted or not and coverage is su
   $ samtools index $O $TMP1.bai && ls $TMP1.bai >/dev/null && echo $?
   0
 
-  $ samtools depth $O | awk '{sum+=$3} END {print sum}'
-  197752
+Sum of depth > 197740
+  $ samtools depth $O | awk '{sum+=$3} END {if (sum >= 197740) print "TRUE"; else print "FALSE"}'
+  TRUE
 
   $ samtools flagstat $O
   248 + 0 in total (QC-passed reads + QC-failed reads)
